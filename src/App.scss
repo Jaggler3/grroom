@@ -1,0 +1,24 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+p {
+	font-family: 'Manrope', sans-serif;
+}
+
+button {
+	background-color: #5697E3;
+	padding: .75em 3em;
+	height: fit-content;
+	font-size: .9em;
+	border: none;
+	border-radius: 2em;
+	font-weight: 600;
+	outline: none;
+	cursor: pointer;
+
+	> p {
+		color: white;
+	}
+}
