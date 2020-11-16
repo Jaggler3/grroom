@@ -1,6 +1,12 @@
+@import 'colors.scss';
+
 * {
 	margin: 0;
 	padding: 0;
+}
+
+html, body {
+	background-color: #F3F3F3;
 }
 
 p {
@@ -8,10 +14,10 @@ p {
 }
 
 button {
-	background-color: #5697E3;
+	background-color: $button-color;
 	padding: .75em 3em;
 	height: fit-content;
-	font-size: .9em;
+	font-size: .8em;
 	border: none;
 	border-radius: 2em;
 	font-weight: 600;
@@ -20,5 +26,6 @@ button {
 
 	> p {
 		color: white;
+		user-select: none;
 	}
 }

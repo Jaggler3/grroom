@@ -1,0 +1,51 @@
+#table-container {
+	flex: 1;
+
+	table {
+		border-spacing: 0;
+		border-collapse: separate;
+	}
+
+	th, td {
+		padding: 1em .25em;
+		box-sizing: border-box;
+		margin: 0;
+		white-space: pre;
+	}
+
+	#table-content {
+
+		#data-header tr > th {
+			background-color: white;
+			text-align: left;
+		}
+
+		#data-scrollable {
+			overflow-y: scroll;
+			max-height: calc(100vh - 12.5em)
+		}
+
+		#data-content {
+			width: 100%;
+			background-color: #FDFDFD;
+
+			#data-content-empty-row > td {
+				border: none;
+				padding: 0;
+			}
+
+			.item-number {
+				text-align: right;
+				border: none;
+
+				user-select: none;
+
+				> p {
+					font-size: .75em;
+					opacity: .5;
+					font-weight: bold;
+				}
+			}
+		}
+	}
+}

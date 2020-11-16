@@ -1,0 +1,80 @@
+@import '../colors.scss';
+
+#mods {
+	width: 20em;
+	margin-right: 1em;
+	padding: 0 1em;
+
+	> button {
+		width: 100%;
+		box-sizing: border-box;
+		margin-bottom: 1em;
+		margin-top: 0.5em;
+	}
+
+	> h2 {
+		font-size: 1.5em;
+		font-weight: 600;
+	}
+
+	> h3 {
+		font-size: 1.25em;
+		font-weight: 500;
+	}
+}
+
+#mod-suggestions {
+	max-height: calc(100vh - 16em);
+	overflow-y: scroll;
+}
+
+.help-modifier {
+	padding: .25em;
+	background-color: white;
+	border-radius: 1em;
+	margin: 1em 0;
+
+	> p {
+		margin-left: .75em;
+		margin-right: 2em;
+	}
+}
+
+.modifier-top {
+	display:  flex;
+
+	> h2 {
+		flex: 1;
+		margin-top: .5em;
+		margin-left: .5em;
+	}
+
+	> button {
+		width: 2em;
+		height: 2em;
+		padding: 0;
+		background-color: transparent;
+		border: 2px solid $button-color;
+		
+		> p {
+			color: $button-color;
+		}
+	}
+}
+
+.modifier-buttons {
+	padding: 1em 0;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+
+	> button {
+		padding-left: 1em;
+		padding-right: 1.5em;
+		margin: 0 .5em;
+
+		> p > i {
+			margin-right: .5em;
+		}
+	}
+}

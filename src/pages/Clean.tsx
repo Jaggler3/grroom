@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, createRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 /**
  * page loads table and suggestion sidebar, modal asks for data set, you can select the example data set or upload
@@ -9,52 +9,67 @@ import React, { useState, useRef, useEffect, createRef } from 'react'
  */
 
 import './Clean.scss'
-
-interface DataItem {
-	_id: Number,
-	[key: string]: any
-}
-
-interface DataSet {
-	name: string,
-	columns: string[],
-	items: DataItem[]
-}
+import Header from '../components/Header'
+import { DataSet } from '../core/DataSet'
+import CleanerTable from '../components/CleanerTable'
+import Mods from '../components/Mods'
+import { Modifier, HelpModifier } from '../core/Modifier'
 
 const TestDataSet: DataSet = {
+	lastModified: 0,
 	name: "Test.csv",
 	columns: [
-		"x",
-		"y",
-		"z"
+		"Name",
+		"Phone",
+		"Type"
 	],
 	items: [
-		{ _id: 0, x: "hello", y: "world", z: "12345" },
-		{ _id: 1, x: "hello", y: "orld", z: "52143452" },
-		{ _id: 2, x: "hello", y: "world", z: "532123" },
-		{ _id: 3, x: "hello", y: "world", z: "512987" },
+		{ _id: 0, "Name": "Martin", "Phone": "8035558030", "Type": "Student" },
+		{ _id: 1, "Name": "Andrew", "Phone": "+1(803)-555-8030", "Type": "  Student" },
+		{ _id: 2, "Name": "Darazs", "Phone": "8035558030", "Type": "student" },
+		{ _id: 3, "Name": "isodore", "Phone": "8035558030", "Type": "Professor" },
+		{ _id: 4, "Name": "Andrew", "Phone": "+1(803)-555-8030", "Type": "  Student" },
+		{ _id: 5, "Name": "Darazs", "Phone": "8035558030", "Type": "student" },
+		{ _id: 6, "Name": "isodore", "Phone": "8035558030", "Type": "Professor" },
+		{ _id: 7, "Name": "Andrew", "Phone": "+1(803)-555-8030", "Type": "  Student" },
+		{ _id: 8, "Name": "Darazs", "Phone": "8035558030", "Type": "student" },
+		{ _id: 9, "Name": "isodore", "Phone": "8035558030", "Type": "Professor" },
+		{ _id: 10, "Name": "Andrew", "Phone": "+1(803)-555-8030", "Type": "  Student" },
+		{ _id: 22, "Name": "Darazs", "Phone": "8035558030", "Type": "student" },
+		{ _id: 32, "Name": "isodore", "Phone": "8035558030", "Type": "Professor" },
+		{ _id: 13, "Name": "Andrew", "Phone": "+1(803)-555-8030", "Type": "  Student" },
+		{ _id: 24, "Name": "Darazs", "Phone": "8035558030", "Type": "student" },
+		{ _id: 35, "Name": "isodore", "Phone": "8035558030", "Type": "Professor" },
 	]
 }
 
 export default function Clean() {
 
-	const [dataSet, setDataSet] = useState(TestDataSet)
+	const [dataSet, setDataSet] = useState<DataSet>(TestDataSet)
 
 	const measureColumns = useRef<(HTMLDivElement | null)[]>(new Array(TestDataSet.columns.length + 1))
-	const [colWidths, setColWidths] = useState<(string | undefined)[]>([])
+	const [colWidths, setColWidths] = useState<string[]>([])
 
 	useEffect(() => {
-		setColWidths(measureColumns.current.map((a) => a?.offsetWidth + ""))
+		setColWidths(measureColumns.current.map((a) => {
+			let val: string = "";
+			if(a) {
+				val = a.clientWidth.toString();
+			}
+			return val;
+		}))
 	}, [])
+
+	const applyMod = (mod: HelpModifier) => {
+		let newData = mod.effect()
+		setDataSet({
+			...newData
+		})
+	}
 
 	return (
 		<div id="main">
-			<header>
-				<p>Grroom</p>
-				<button>
-					<p>Import</p>
-				</button>
-			</header>
+			<Header />
 			<div id="top">
 				<div id="name">
 					<input placeholder="Your data set name..." />
@@ -66,46 +81,8 @@ export default function Clean() {
 				</div>
 			</div>
 			<div id="center">
-				<div id="table-container">
-					<div id="table-content">
-						<table id="data-header">
-							<tr>
-								<th style={{
-									width: colWidths[0]
-								}}>#</th>
-								{dataSet.columns.map((col, i) => (
-									<th key={col} style={{
-										width: colWidths[i + 1]
-									}}>{col}</th>
-								))}
-							</tr>
-						</table>
-						<table id="data-content">
-							<tr id="data-content-empty-row">
-								<td ref={(ref) => measureColumns.current[0] = ref}></td>
-								{dataSet.columns.map((col, i) => (
-									<td key={col + " " + i} ref={(ref) => measureColumns.current[i + 1] = ref}></td>
-								))}
-							</tr>
-							{dataSet.items.map((item, i) => (
-								<tr key={item._id.toString()}>
-									<td className="item-number">{i + 1}</td>
-									{dataSet.columns.map((col, i) => (
-										<td key={item._id + " " + col + " " + i}>{item[col]}</td>
-									))}
-								</tr>
-							))}
-						</table>
-					</div>
-				</div>
-				<div id="mods">
-					<h2>Mods</h2>
-					<button>
-						<p>+ New Mod</p>
-					</button>
-					<h3>Suggestions</h3>
-					<div id="mod-suggestions"></div>
-				</div>
+				<CleanerTable dataSet={dataSet} colWidths={colWidths} measureColumns={measureColumns} />
+				<Mods dataSet={dataSet} applyMod={applyMod} />
 			</div>
 		</div>
 	)

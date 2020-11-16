@@ -3,21 +3,6 @@
 	height: 100vh;
 }
 
-header {
-	width: 100vw;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	padding: .1em;
-	box-sizing: border-box;
-
-	> p {
-		font-size: 2em;
-		font-weight: 800;
-		padding: 0.1em 1em;
-	}
-}
-
 #top {
 	display: flex;
 	margin: 0 1em;
@@ -34,6 +19,8 @@ header {
 			font-size: 1.5em;
 			padding-left: 1em;
 			margin: 0 1em;
+			padding-bottom: .5em;
+			background-color: transparent;
 		}
 	}
 }
@@ -42,74 +29,7 @@ header {
 	display: flex;
 	flex-direction: row;
 	position: relative;
-	padding-top: 1em;
-
-	#table-marker, #table-container, #mods {
-		height: 100%;
-	}
-
-	#table-container {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-
-		table {
-			border-spacing: 0;
-			border-collapse: separate;
-		}
-
-		th, td {
-			min-width: 5em;
-			border: 1px solid gray;
-			padding: 1em .25em;
-			box-sizing: border-box;
-			margin: 0;
-		}
-
-		#table-content {
-			width: fit-content;
-			position: relative;
-
-			#data-header {
-				width: 100%;
-			}
-	
-			#data-content {
-				overflow: scroll;
-				width: 100%;
-
-				#data-content-empty-row > td {
-					border: none;
-					padding: 0;
-				}
-
-				.item-number {
-					text-align: right;
-					border-right: 1px solid black;
-				}
-			}
-		}
-	}
-
-	#mods {
-		width: 20em;
-		margin-right: 1em;
-
-		> button {
-			width: 100%;
-			box-sizing: border-box;
-			margin-bottom: 1em;
-			margin-top: .5em;
-		}
-
-		> h2 {
-			font-size: 1.5em;
-			font-weight: 600;
-		}
-
-		> h3 {
-			font-size: 1.25em;
-			font-weight: 500;
-		}
-	}
+	padding: 1em;
+	max-height: calc(100vh - 10em);
+	overflow: scroll;
 }
