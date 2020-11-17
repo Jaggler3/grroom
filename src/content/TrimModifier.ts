@@ -1,13 +1,18 @@
 import { HelpModifier, ModifierGenerator, createModifierID } from "../core/Modifier"
-import { DataSet } from "../core/DataSet"
+import { DataSet, DataItem, createDataItemID } from "../core/DataSet"
 
 const TrimModifier: ModifierGenerator = (data: DataSet) => {
 	let modifiers: HelpModifier[] = []
 
 	const trimEffect = (column: string) => {
 		return () => {
-			for(const item of data.items) {
-				item[column] = item[column].trim()
+			for(let i = 0; i < data.items.length; i++) {
+				const newItem: DataItem = {
+					...data.items[i],
+					_id: createDataItemID(),
+					[column]: data.items[i][column].trim()
+				}
+				data.items[i] = newItem
 			}
 			return data
 		}
@@ -24,7 +29,8 @@ const TrimModifier: ModifierGenerator = (data: DataSet) => {
 					id: createModifierID(),
 					name: `Trim '${column}'`,
 					desc: "Remove the leading and trailing whitespace of each item in this column",
-					effect: trimEffect(column)
+					helpEffect: trimEffect(column),
+					effect: ""
 				})
 			}
 		}

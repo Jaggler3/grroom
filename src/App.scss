@@ -29,3 +29,8 @@ button {
 		user-select: none;
 	}
 }
+
+button.disabled {
+	background-color: rgba($color: black, $alpha: 0.2);
+	cursor: not-allowed;
+}

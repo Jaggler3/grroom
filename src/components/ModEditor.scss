@@ -1,0 +1,81 @@
+#mod-editor {
+	width: 40em;
+	max-width: 95vw;
+	height: 50em;
+	max-height: 95vh;
+	background-color: #F3F3F3;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	padding: 1em;
+	border-radius: 1em;
+	position: relative;
+}
+
+#editor-ace-label {
+	background-color: #E8E9E8;
+	width: fit-content;
+	padding: .5em 2em;
+	font-size: .75em;
+	font-weight: bold;
+}
+
+#editor-ace {
+	flex: 1;
+	width: 100% !important;
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#editor-name-parent {
+	display: flex;
+	flex-direction: column-reverse;
+
+	> input {
+		border: none;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+		outline: none;
+		font-size: 1.5em;
+		padding-left: 1em;
+		margin: 1em 1em;
+		padding-bottom: .25em;
+		background-color: transparent;
+	}
+}
+
+#editor-buttons {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	padding: 1em 0 .75em 0;
+
+	> button {
+		margin: 0 1em;
+		width: 10em;
+	}
+}
+
+#validation-area {
+	height: 5em;
+	position: relative;
+
+	> #error, > #success {
+		background-color: orangered;
+		color: white;
+		border-radius: 1em;
+		min-height: 2em;
+		height: fit-content;
+		max-height: 5em;
+		overflow-y: scroll;
+		padding: 1em 1em;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		box-sizing: border-box;
+		margin: 1em 0;
+	}
+
+	> #success {
+		background-color: rgb(9, 158, 9);
+	}
+}

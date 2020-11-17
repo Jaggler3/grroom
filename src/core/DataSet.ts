@@ -9,3 +9,5 @@ export interface DataSet {
 	columns: string[],
 	items: DataItem[]
 }
+
+export const createDataItemID = () => Math.floor(Math.random() * 8999999999 + 1000000000)

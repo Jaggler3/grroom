@@ -23,8 +23,8 @@
 	}
 }
 
-#mod-suggestions {
-	max-height: calc(100vh - 16em);
+#mod-list {
+	max-height: calc(100vh - 15.25em);
 	overflow-y: scroll;
 }
 
@@ -32,7 +32,7 @@
 	padding: .25em;
 	background-color: white;
 	border-radius: 1em;
-	margin: 1em 0;
+	margin-bottom: 1em;
 
 	> p {
 		margin-left: .75em;
@@ -47,6 +47,7 @@
 		flex: 1;
 		margin-top: .5em;
 		margin-left: .5em;
+		margin-bottom: .5em;
 	}
 
 	> button {

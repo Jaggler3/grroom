@@ -1,0 +1,21 @@
+#table-container {
+	overflow: scroll;
+}
+
+#table-content {
+	display: flex;
+	flex-direction: column;
+	max-height: 100%;
+}
+
+#data-scrollable {
+	flex: 1;
+}
+
+.diff {
+	background-color: #f5ff6f;
+}
+
+.diff-column {
+	font-weight: bold;
+}

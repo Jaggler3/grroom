@@ -1,20 +1,23 @@
 import { HelpModifier, ModifierGenerator, createModifierID } from "../core/Modifier"
-import { DataSet } from "../core/DataSet"
+import { DataSet, createDataItemID } from "../core/DataSet"
 
 const CapitalizeModifier: ModifierGenerator = (data: DataSet) => {
 	let modifiers: HelpModifier[] = []
 
 	const capitalizeEffect = (column: string) => {
 		return () => {
-			for(const item of data.items) {
+			for(let i = 0; i < data.items.length; i++) {
+				const item = data.items[i]
 				const original: string = item[column]
 				const firstCharIndex = original.length - original.trimStart().length;
-				item[column] =
-					original.substring(0, firstCharIndex) + //whitespace
+				data.items[i] = {
+					...item,
+					_id: createDataItemID(),
+					[column]: original.substring(0, firstCharIndex) + //whitespace
 					original.charAt(firstCharIndex).toUpperCase() + //capitalize
 					(original.length > firstCharIndex ? original.substring(firstCharIndex + 1) : "") //text after first character
+				}
 			}
-
 			return data
 		}
 	}
@@ -32,7 +35,8 @@ const CapitalizeModifier: ModifierGenerator = (data: DataSet) => {
 						id: createModifierID(),
 						name: `Capitalize '${column}'`,
 						desc: "Make the first character of each item in this column uppercase",
-						effect: capitalizeEffect(column)
+						helpEffect: capitalizeEffect(column),
+						effect: ""
 					})
 				}
 			}
