@@ -1,13 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
 
-/**
- * page loads table and suggestion sidebar, modal asks for data set, you can select the example data set or upload
- * top of sidebar has "create mod" button
- * below create mod button shows "suggested"
- * mods slide into sidebar
- * you can preview mods
- */
-
 import './Clean.scss'
 import Header from '../components/Header'
 import { DataSet, createDataItemID } from '../core/DataSet'
@@ -20,63 +12,13 @@ import { TestDataSet } from '../content/TestDataSet'
 import Welcome from '../components/Welcome'
 import ModEditor from '../components/ModEditor'
 import { ExampleModText } from '../content/ExampleMod'
-import CookieNames, { GetModCookieName } from '../content/CookieNames'
+import { LoadLocalMods, LocalEffect, RemoveModFromCookies, SaveMod } from '../core/ModifierUtils'
 
 const InitialDataSet: DataSet = {
 	lastModified: 0,
 	name: "",
 	columns: [],
 	items: []
-}
-
-const getLocalMods = (): string[] => {
-	let list;
-	if((list = localStorage.getItem(CookieNames.ModList))) {
-		return list.split("\n")
-	} else {
-		return []
-	}
-}
-
-const loadLocalMods = (): Modifier[] => {
-	const names = getLocalMods();
-	return names.map((name) => {
-		let _mod: Modifier = {
-			id: createModifierID(),
-			name,
-			effect: "" + localStorage.getItem(GetModCookieName(name))
-		}
-		return _mod;
-	})
-}
-
-const localEffect = (original: DataSet, mod: Modifier): DataSet => {
-	let result: DataSet = {
-		lastModified: 0,
-		name: "",
-		columns: original.columns,
-		items: original.items
-	}
-
-	function initFunc(interpreter: any, scope: any) {
-		interpreter.setProperty(scope, "__rows", interpreter.createArray(result.items))
-		interpreter.setProperty(scope, "__cols", interpreter.createArray(result.columns))
-	}
-
-	const code = `
-	function modify(effect) { effect(__rows, __cols) }
-	` + mod.effect
-
-	if(Interpreter) {
-		try {
-			let parsed = new Interpreter(code, initFunc)
-			parsed.run()
-		} catch (e) {
-			console.error(e)
-		}
-	}
-
-	return result;
 }
 
 export default function Clean() {
@@ -91,7 +33,7 @@ export default function Clean() {
 	const [selectedMod, setSelectedMod] = useState<Modifier>({ id: "", name: "", effect: "" })
 	const [previewType, setPreviewType] = useState("")
 
-	const [localMods, setLocalMods] = useState<Modifier[]>(loadLocalMods())
+	const [localMods, setLocalMods] = useState<Modifier[]>(LoadLocalMods())
 
 	useEffect(() => {
 		setColWidths(measureColumns.current.map((a) => {
@@ -104,11 +46,14 @@ export default function Clean() {
 	}, [measureColumns.current.length, window.innerWidth])
 
 	const applyMod = (mod: Modifier, suggested: boolean) => {
-		console.log("apply")
 		if(suggested) {
 			const helpMod = mod as HelpModifier
 			setDataSet({
 				...helpMod.helpEffect()
+			})
+		} else {
+			setDataSet({
+				...LocalEffect(dataSet, mod)
 			})
 		}
 	}
@@ -148,9 +93,22 @@ export default function Clean() {
 		setShowOverlay(true)
 	}
 
+	const saveLocalMod = (initialName: string, mod: Modifier) => {
+		RemoveModFromCookies(initialName)
+		setLocalMods([ ...localMods.filter(x => x.name !== initialName), mod])
+		SaveMod(mod)
+	}
+
 	const removeLocalMod = (mod: Modifier) => {
-		localStorage.removeItem(GetModCookieName(mod.name))
-		setLocalMods(localMods.filter(x => x.name !== mod.name))
+		const modName = mod.name.trim()
+		RemoveModFromCookies(modName)
+		setLocalMods(localMods.filter(x => x.name !== modName))
+	}
+
+	const editMod = (mod: Modifier) => {
+		setOverlayPurpose("edit custom")
+		setSelectedMod(mod)
+		setShowOverlay(true)
 	}
 
 	return (
@@ -179,6 +137,7 @@ export default function Clean() {
 					newMod={newMod}
 					localMods={localMods}
 					removeLocalMod={removeLocalMod}
+					editMod={editMod}
 				/>
 			</div>
 			<AnimatePresence>
@@ -199,7 +158,7 @@ export default function Clean() {
 								<br/>
 								<PreviewTable
 									beforeSet={dataSet}
-									afterSet={('helpEffect' in selectedMod) ? (selectedMod as HelpModifier).helpEffect() : localEffect(dataSet, selectedMod)}
+									afterSet={('helpEffect' in selectedMod) ? (selectedMod as HelpModifier).helpEffect() : LocalEffect(dataSet, selectedMod)}
 								/>
 								<div id="preview-buttons">
 									<button id="cancel-preview" onClick={closeOverlay}>
@@ -216,6 +175,7 @@ export default function Clean() {
 								initial={selectedMod}
 								editing={overlayPurpose === "new custom"}
 								exit={closeOverlay}
+								saveMod={saveLocalMod}
 							/>
 						)}
 					</motion.div>

@@ -12,10 +12,11 @@ interface ModsProps {
 	previewMod: (mod: Modifier, suggested: boolean) => void,
 	newMod: () => void,
 	localMods: Modifier[],
-	removeLocalMod: (mod: Modifier) => void
+	removeLocalMod: (mod: Modifier) => void,
+	editMod: (mod: Modifier) => void
 }
 
-export default function Mods({ dataSet, localMods, applyMod, previewMod, newMod, removeLocalMod }: ModsProps) {
+export default function Mods({ dataSet, localMods, applyMod, previewMod, newMod, removeLocalMod, editMod }: ModsProps) {
 
 	const [suggestions, setSuggestions] = useState<HelpModifier[]>([])
 
@@ -49,21 +50,24 @@ export default function Mods({ dataSet, localMods, applyMod, previewMod, newMod,
 						<>
 							{localMods.map((mod, i) => (
 								<ModCard
+									key={mod.id}
 									helper={false}
 									indexForDelay={i}
 									mod={mod}
 									applyMod={applyMod}
 									previewMod={previewMod}
-									removeMod={removeLocalMod}
+									removeMod={(m) => removeMod(m, false)}
+									editMod={editMod}
 								/>
 							))}
 							<br />
 						</>
 					)}
-					<h3>Suggestions</h3>
-					<br />
+					<h3 key="suggestion-label">Suggestions</h3>
+					<br key="space-label" />
 					{suggestions.map((helpMod, i) => (
 						<ModCard
+							key={helpMod.id}
 							helper={true}
 							indexForDelay={i}
 							mod={helpMod}
@@ -84,14 +88,15 @@ interface ModCardProps {
 	indexForDelay: number,
 	previewMod: (mod: Modifier, suggested: boolean) => void,
 	removeMod: (mod: Modifier) => void,
-	applyMod: (mod: Modifier, suggested: boolean) => void
+	applyMod: (mod: Modifier, suggested: boolean) => void,
+	editMod?: (mod: Modifier) => void
 }
 
-function ModCard({ helper, indexForDelay, mod, previewMod, removeMod, applyMod }: ModCardProps) {
+function ModCard({ helper, indexForDelay, mod, previewMod, removeMod, applyMod, editMod }: ModCardProps) {
 	return (
 		<motion.div
 			className="help-modifier"
-			key={mod.name}
+			key={mod.id}
 			initial={{
 				opacity: 0
 			}}
@@ -115,9 +120,6 @@ function ModCard({ helper, indexForDelay, mod, previewMod, removeMod, applyMod }
 			</div>
 			{helper && <p>{(mod as HelpModifier).desc}</p>}
 			<div className="modifier-buttons">
-				{!helper && <button onClick={() => removeMod(mod)}>
-					<p><i className="fas fa-times"></i> Delete</p>
-				</button>}
 				<button onClick={() => previewMod(mod, helper)}>
 					<p><i className="fas fa-eye"></i> Preview</p>
 				</button>
@@ -125,6 +127,16 @@ function ModCard({ helper, indexForDelay, mod, previewMod, removeMod, applyMod }
 					<p><i className="fas fa-check"></i> Apply</p>
 				</button>
 			</div>
+			{!helper && (
+				<div className="modifier-buttons">
+					<button onClick={() => removeMod(mod)}>
+						<p><i className="fas fa-times"></i> Delete</p>
+					</button>
+					<button onClick={() => editMod!(mod)}>
+						<p><i className="fas fa-i-cursor"></i> Edit</p>
+					</button>
+				</div>
+			)}
 		</motion.div>
 	)
 }
