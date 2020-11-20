@@ -14,6 +14,7 @@
 	}
 
 	#table-content {
+		overflow-x: scroll;
 
 		#data-header tr > th {
 			background-color: white;
@@ -39,6 +40,7 @@
 				border: none;
 
 				user-select: none;
+				width: fit-content;
 
 				> p {
 					font-size: .75em;

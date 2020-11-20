@@ -13,9 +13,12 @@
 		"@types/react-dom": "^16.9.9",
 		"@types/react-router-dom": "^5.1.6",
 		"ace-builds": "^1.4.12",
+		"filepond": "^4.23.1",
+		"filepond-plugin-file-validate-type": "^1.2.5",
 		"framer-motion": "^2.9.4",
 		"js-interpreter": "^2.2.0",
 		"node-sass": "^4.14.1",
+		"papaparse": "^5.3.0",
 		"react": "^17.0.1",
 		"react-ace": "^9.2.0",
 		"react-dom": "^17.0.1",
@@ -45,5 +48,8 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
+	},
+	"devDependencies": {
+		"@types/papaparse": "^5.2.4"
 	}
 }

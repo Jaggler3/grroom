@@ -1,29 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import './Clean.scss'
 import Header from '../components/Header'
-import { DataSet, createDataItemID } from '../core/DataSet'
+import { DataSet, EmptyDataSet } from '../core/DataSet'
 import CleanerTable from '../components/CleanerTable'
 import Mods from '../components/Mods'
 import { HelpModifier, Modifier, createModifierID } from '../core/Modifier'
-import { AnimatePresence, motion } from 'framer-motion'
 import PreviewTable from '../components/PreviewTable'
 import { TestDataSet } from '../content/TestDataSet'
 import Welcome from '../components/Welcome'
 import ModEditor from '../components/ModEditor'
 import { ExampleModText } from '../content/ExampleMod'
 import { LoadLocalMods, LocalEffect, RemoveModFromCookies, SaveMod } from '../core/ModifierUtils'
+import { Deserialize } from '../core/CSVSerialize'
 
-const InitialDataSet: DataSet = {
-	lastModified: 0,
-	name: "",
-	columns: [],
-	items: []
-}
+const UploaderURL = "http://localhost:8000"
+//const UploaderURL = "https://grroom-uploader.herokuapp.com"
 
 export default function Clean() {
 
-	const [dataSet, setDataSet] = useState<DataSet>(InitialDataSet)
+	const [dataSet, setDataSet] = useState<DataSet>(EmptyDataSet)
 
 	const measureColumns = useRef<(HTMLDivElement | null)[]>(new Array(1))
 	const [colWidths, setColWidths] = useState<string[]>([])
@@ -36,30 +33,47 @@ export default function Clean() {
 	const [localMods, setLocalMods] = useState<Modifier[]>(LoadLocalMods())
 
 	useEffect(() => {
-		setColWidths(measureColumns.current.map((a) => {
-			let val: string = "";
-			if (a) {
-				val = a.clientWidth.toString();
-			}
-			return val;
-		}))
-	}, [measureColumns.current.length, window.innerWidth])
+		setColWidths(measureColumns.current.map((a) => a ? a.clientWidth.toString() : ""))
+	}, [measureColumns.current, measureColumns.current.length, window.innerWidth])
 
 	const applyMod = (mod: Modifier, suggested: boolean) => {
 		if(suggested) {
 			const helpMod = mod as HelpModifier
-			setDataSet({
-				...helpMod.helpEffect()
-			})
+			setDataSet({ ...helpMod.helpEffect() })
 		} else {
-			setDataSet({
-				...LocalEffect(dataSet, mod)
-			})
+			setDataSet({ ...LocalEffect(dataSet, mod) })
 		}
 	}
 
+	const startDownload = async (name: string, location: string) => {
+		const fileContents = (await (await fetch(UploaderURL + "/uploaded/" + location)).text()).trim()
+		const parsedDataSet = Deserialize(name, fileContents)
+		measureColumns.current = new Array(parsedDataSet.columns.length + 1)
+		setShowOverlay(false)
+		setDataSet(parsedDataSet)
+	}
+
 	const selectUpload = () => {
-		
+		const fileInput = document.createElement("input")
+		fileInput.type = "file"
+		fileInput.accept = "csv"
+		fileInput.multiple = false
+		fileInput.addEventListener("change", async (event) => {
+			const formData = new FormData()
+			if(fileInput.files) {
+				formData.append('csv-file', fileInput.files[0])
+
+				const response = await (await fetch(UploaderURL + "/upload", {
+					method: "POST",
+					body: formData
+				})).json()
+
+				if(response.success) {
+					startDownload(response.name, response.location)
+				}
+			}
+		})
+		fileInput.click()
 	}
 
 	const selectExample = () => {

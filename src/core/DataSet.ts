@@ -11,3 +11,10 @@ export interface DataSet {
 }
 
 export const createDataItemID = () => Math.floor(Math.random() * 8999999999 + 1000000000)
+
+export const EmptyDataSet: DataSet = {
+	lastModified: 0,
+	name: "",
+	columns: [],
+	items: []
+}
