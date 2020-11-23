@@ -7,7 +7,6 @@ import "ace-builds/src-noconflict/theme-kuroir";
 
 import './ModEditor.scss'
 import { Modifier } from '../core/Modifier'
-import CookieNames, { GetModCookieName } from '../content/CookieNames';
 
 interface ModEditorProps {
 	initial: Modifier,
@@ -33,7 +32,7 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 
 	const validate = () => {
 		setValidationError("")
-		if (currentMod.name.trim().length == 0) {
+		if (currentMod.name.trim().length === 0) {
 			setValidationError("GrroomError: Name is empty")
 		}
 		let code = currentMod.effect
@@ -131,7 +130,7 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 					</button>
 				</div>
 				<br/>
-				<a id="help" href="https://github.com/Jaggler3/grroom/#custom-modifiers" target="_blank">Need help?</a>
+				<a id="help" href="https://github.com/Jaggler3/grroom/#custom-modifiers" rel="noreferrer" target="_blank">Need help?</a>
 				{showSaveModal && <div id="mod-save">
 					<div id="save-modal">
 						<p>You have unsaved changes. Would you like to validate and save?</p>
