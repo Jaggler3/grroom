@@ -20,7 +20,7 @@ export default function Mods({ dataSet, localMods, applyMod, previewMod, newMod,
 
 	const [suggestions, setSuggestions] = useState<HelpModifier[]>([])
 
-	useEffect(() => setSuggestions(Suggest(dataSet)), [dataSet])
+	useEffect(() => setSuggestions((suggestions) => Suggest(suggestions, dataSet)), [dataSet])
 
 	const applySuggestion = (mod: HelpModifier) => {
 		removeSuggestion(mod)

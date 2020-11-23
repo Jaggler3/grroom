@@ -8,7 +8,7 @@ const AllHelpModifiers = [
 	TrimModifier
 ]
 
-export default function Suggest(data: DataSet) {
+export default function Suggest(oldSuggestions: HelpModifier[], data: DataSet) {
 	let suggestions: HelpModifier[] = [];
 
 	for(const modifier of AllHelpModifiers) {
@@ -19,7 +19,16 @@ export default function Suggest(data: DataSet) {
 			name: data.name
 		});
 		if(result && result.length > 0) {
-			suggestions = [...suggestions, ...result]
+			suggestions.push(...result)
+		}
+	}
+
+	for(const oldSuggestion of oldSuggestions) {
+		for(const newSuggestion of suggestions) {
+			if(newSuggestion.name === newSuggestion.name) {
+				newSuggestion.id = oldSuggestion.id
+				break
+			}
 		}
 	}
 
