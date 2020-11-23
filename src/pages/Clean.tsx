@@ -143,6 +143,7 @@ export default function Clean() {
 						placeholder="Your data set name..."
 						value={dataSet.name}
 						onChange={(e) => setDataSet({ ...dataSet, name: e.target.value })}
+						spellCheck={false}
 					/>
 				</div>
 				<div id="top-buttons">

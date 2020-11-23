@@ -130,6 +130,8 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 						<p>Save</p>
 					</button>
 				</div>
+				<br/>
+				<a id="help" href="#" target="_blank">Need help?</a>
 				{showSaveModal && <div id="mod-save">
 					<div id="save-modal">
 						<p>You have unsaved changes. Would you like to validate and save?</p>
