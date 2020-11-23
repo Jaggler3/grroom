@@ -17,8 +17,8 @@ import { ExampleModText } from '../content/ExampleMod'
 import { LoadLocalMods, LocalEffect, RemoveModFromCookies, SaveMod } from '../core/ModifierUtils'
 import { Deserialize, SaveFile, Serialize } from '../core/CSVSerialize'
 
-const UploaderURL = "http://localhost:8000"
-//const UploaderURL = "https://grroom-uploader.herokuapp.com"
+const UploaderURL: string = "https://grroom-uploader.herokuapp.com"
+const FIVE_MBS: number = 5 * 1024 * 1024
 
 export default function Clean() {
 
@@ -40,33 +40,32 @@ export default function Clean() {
 		setChangesMade(true)
 	}
 
-	const startDownload = async (name: string, location: string) => {
-		setOverlayPurpose("loading")
-		const fileContents = (await (await fetch(UploaderURL + "/uploaded/" + location)).text()).trim()
-		const parsedDataSet = Deserialize(name, fileContents)
-		setShowOverlay(false)
-		setChangesMade(false)
-		setDataSet(parsedDataSet)
-	}
-
-	const selectUpload = () => {
+	const selectUpload = (originState: string) => {
 		const fileInput = document.createElement("input")
 		fileInput.type = "file"
 		fileInput.accept = "csv"
 		fileInput.multiple = false
-		fileInput.addEventListener("change", async (event) => {
+		fileInput.addEventListener("change", async () => {
 			const formData = new FormData()
 			if (fileInput.files) {
 				formData.append('csv-file', fileInput.files[0])
+				if(fileInput.files[0].size > FIVE_MBS) {
+					setOverlayPurpose("disallowed " + originState)
+					setShowOverlay(true)
+					return;
+				}
 
-				const response = await (await fetch(UploaderURL + "/upload", {
+				setOverlayPurpose("loading")
+				const fileContents = (await (await fetch(UploaderURL + "/upload", {
 					method: "POST",
 					body: formData
-				})).json()
+				})).text()).trim()
 
-				if (response.success) {
-					startDownload(response.name, response.location)
-				}
+				console.log(fileContents)
+				const parsedDataSet = Deserialize(fileInput.files[0].name, fileContents)
+				setShowOverlay(false)
+				setChangesMade(false)
+				setDataSet(parsedDataSet)
 			}
 		})
 		fileInput.click()
@@ -125,13 +124,20 @@ export default function Clean() {
 			setOverlayPurpose("confirm discard")
 			setShowOverlay(true)
 		} else {
-			selectUpload()
+			selectUpload("none")
 		}
 	}
 
 	const createExport = () => {
 		SaveFile(dataSet.name, Serialize(dataSet))
 		setChangesMade(false)
+	}
+
+	const closeDisallowed = (originState: string) => {
+		setOverlayPurpose(originState)
+		if(originState === "none") {
+			setShowOverlay(false)
+		}
 	}
 
 	return (
@@ -174,7 +180,7 @@ export default function Clean() {
 						transition={{ duration: .25 }}
 					>
 						{overlayPurpose === "welcome" && (
-							<Welcome selectUpload={selectUpload} selectExample={selectExample} />
+							<Welcome selectUpload={() => selectUpload("welcome")} selectExample={selectExample} />
 						)}
 						{overlayPurpose === "preview" && (
 							<div id="mod-preview">
@@ -219,8 +225,20 @@ export default function Clean() {
 									<button className="cancel" onClick={closeOverlay}>
 										<p>Cancel</p>
 									</button>
-									<button onClick={() => selectUpload()}>
+									<button onClick={() => selectUpload("none")}>
 										<p>Continue</p>
+									</button>
+								</div>
+							</div>
+						)}
+						{overlayPurpose.startsWith("disallowed") && (
+							<div id="disallowed">
+								<p><strong>Aw, snap.</strong></p>
+								<br/>
+								<p>Currently, Grroom only supports uploading files no larger than 5 MB.</p>
+								<div className="buttons">
+									<button onClick={() => closeDisallowed(overlayPurpose.split(" ")[1])}>
+										<p>Go Back</p>
 									</button>
 								</div>
 							</div>

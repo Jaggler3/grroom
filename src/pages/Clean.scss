@@ -84,6 +84,14 @@
 		justify-content: center;
 		align-items: center;
 	}
+
+	> #disallowed {
+		@include dialog;
+		width: 30em;
+		height: fit-content;
+		display: flex;
+		flex-direction: column;
+	}
 }
 
 .buttons {
