@@ -1,5 +1,5 @@
 export interface DataItem {
-	_id: Number,
+	_id: number,
 	[key: string]: any
 }
 

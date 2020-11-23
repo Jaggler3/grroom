@@ -22,8 +22,6 @@ export default function Clean() {
 
 	const [dataSet, setDataSet] = useState<DataSet>(EmptyDataSet)
 
-	const measureColumns = useRef<(HTMLDivElement | null)[]>(new Array(1))
-	const [colWidths, setColWidths] = useState<string[]>([])
 
 	const [showOverlay, setShowOverlay] = useState(true)
 	const [overlayPurpose, setOverlayPurpose] = useState("welcome")
@@ -31,10 +29,6 @@ export default function Clean() {
 	const [previewType, setPreviewType] = useState("")
 
 	const [localMods, setLocalMods] = useState<Modifier[]>(LoadLocalMods())
-
-	useEffect(() => {
-		setColWidths(measureColumns.current.map((a) => a ? a.clientWidth.toString() : ""))
-	}, [measureColumns.current, measureColumns.current.length, window.innerWidth])
 
 	const applyMod = (mod: Modifier, suggested: boolean) => {
 		if(suggested) {
@@ -48,7 +42,6 @@ export default function Clean() {
 	const startDownload = async (name: string, location: string) => {
 		const fileContents = (await (await fetch(UploaderURL + "/uploaded/" + location)).text()).trim()
 		const parsedDataSet = Deserialize(name, fileContents)
-		measureColumns.current = new Array(parsedDataSet.columns.length + 1)
 		setShowOverlay(false)
 		setDataSet(parsedDataSet)
 	}
@@ -79,7 +72,6 @@ export default function Clean() {
 	const selectExample = () => {
 		setShowOverlay(false)
 		setDataSet(TestDataSet)
-		measureColumns.current = new Array(TestDataSet.columns.length + 1)
 	}
 
 	const openModPreview = (mod: Modifier, suggested: boolean) => {
@@ -143,7 +135,7 @@ export default function Clean() {
 				</div>
 			</div>
 			<div id="center">
-				<CleanerTable dataSet={dataSet} colWidths={colWidths} measureColumns={measureColumns} />
+				<CleanerTable dataSet={dataSet} />
 				<Mods
 					dataSet={dataSet}
 					applyMod={applyMod}
@@ -161,7 +153,7 @@ export default function Clean() {
 						exit={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						initial={{ opacity: 0 }}
-						transition={{ duration: .5 }}
+						transition={{ duration: .25 }}
 					>
 						{overlayPurpose === "welcome" && (
 							<Welcome selectUpload={selectUpload} selectExample={selectExample} />
