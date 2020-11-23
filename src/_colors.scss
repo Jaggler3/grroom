@@ -1,1 +1,10 @@
 $button-color: #5697E3;
+
+@mixin thin-button {
+	background-color: transparent;
+	border: 2px solid $button-color;
+	
+	> p {
+		color: $button-color;
+	}
+}

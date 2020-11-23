@@ -1,3 +1,12 @@
+@import '../colors.scss';
+
+@mixin dialog {
+	background-color: #F3F3F3;
+	border-radius: 1em;
+	box-sizing: border-box;
+	padding: 1em;
+}
+
 #main {
 	width: 100vw;
 	height: 100vh;
@@ -48,27 +57,13 @@
 	justify-content: center;
 
 	> #mod-preview {
+		@include dialog;
 		width: 40em;
 		max-width: 95vw;
 		height: 50em;
 		max-height: 80vh;
-		background-color: #F3F3F3;
 		display: flex;
 		flex-direction: column;
-		border-radius: 1em;
-		box-sizing: border-box;
-		padding: 1em;
-
-		#preview-buttons {
-			padding: 1em 0 .5em 0;
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-
-			> button {
-				margin: 0 1em;
-			}
-		}
 	}
 
 	> #loading {
@@ -77,5 +72,31 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+
+	> #confirm {
+		@include dialog;
+		width: 30em;
+		height: 10em;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
+.buttons {
+	padding: 1em 0 .5em 0;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+
+	> button {
+		margin: 0 1em;
+	}
+
+	.cancel {
+		@include thin-button;
 	}
 }

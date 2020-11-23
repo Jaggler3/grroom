@@ -15,7 +15,7 @@ import Welcome from '../components/Welcome'
 import ModEditor from '../components/ModEditor'
 import { ExampleModText } from '../content/ExampleMod'
 import { LoadLocalMods, LocalEffect, RemoveModFromCookies, SaveMod } from '../core/ModifierUtils'
-import { Deserialize } from '../core/CSVSerialize'
+import { Deserialize, SaveFile, Serialize } from '../core/CSVSerialize'
 
 const UploaderURL = "http://localhost:8000"
 //const UploaderURL = "https://grroom-uploader.herokuapp.com"
@@ -23,14 +23,12 @@ const UploaderURL = "http://localhost:8000"
 export default function Clean() {
 
 	const [dataSet, setDataSet] = useState<DataSet>(EmptyDataSet)
-
-
 	const [showOverlay, setShowOverlay] = useState(true)
 	const [overlayPurpose, setOverlayPurpose] = useState("welcome")
 	const [selectedMod, setSelectedMod] = useState<Modifier>({ id: "", name: "", effect: "" })
 	const [previewType, setPreviewType] = useState("")
-
 	const [localMods, setLocalMods] = useState<Modifier[]>(LoadLocalMods())
+	const [changesMade, setChangesMade] = useState(false)
 
 	const applyMod = (mod: Modifier, suggested: boolean) => {
 		if (suggested) {
@@ -39,6 +37,7 @@ export default function Clean() {
 		} else {
 			setDataSet({ ...LocalEffect(dataSet, mod) })
 		}
+		setChangesMade(true)
 	}
 
 	const startDownload = async (name: string, location: string) => {
@@ -46,6 +45,7 @@ export default function Clean() {
 		const fileContents = (await (await fetch(UploaderURL + "/uploaded/" + location)).text()).trim()
 		const parsedDataSet = Deserialize(name, fileContents)
 		setShowOverlay(false)
+		setChangesMade(false)
 		setDataSet(parsedDataSet)
 	}
 
@@ -120,9 +120,23 @@ export default function Clean() {
 		setShowOverlay(true)
 	}
 
+	const reopenUpload = () => {
+		if(changesMade) {
+			setOverlayPurpose("confirm discard")
+			setShowOverlay(true)
+		} else {
+			selectUpload()
+		}
+	}
+
+	const createExport = () => {
+		SaveFile(dataSet.name, Serialize(dataSet))
+		setChangesMade(false)
+	}
+
 	return (
 		<div id="main">
-			<Header />
+			<Header onImport={reopenUpload} />
 			<div id="top">
 				<div id="name">
 					<input
@@ -132,7 +146,7 @@ export default function Clean() {
 					/>
 				</div>
 				<div id="top-buttons">
-					<button>
+					<button onClick={createExport}>
 						<p>Export CSV</p>
 					</button>
 				</div>
@@ -169,8 +183,8 @@ export default function Clean() {
 									beforeSet={dataSet}
 									afterSet={('helpEffect' in selectedMod) ? (selectedMod as HelpModifier).helpEffect() : LocalEffect(dataSet, selectedMod)}
 								/>
-								<div id="preview-buttons">
-									<button id="cancel-preview" onClick={closeOverlay}>
+								<div className="buttons">
+									<button className="cancel" onClick={closeOverlay}>
 										<p>Cancel</p>
 									</button>
 									<button onClick={() => approvePreview()}>
@@ -195,6 +209,19 @@ export default function Clean() {
 									height={100}
 									width={100}
 								/>
+							</div>
+						)}
+						{overlayPurpose === "confirm discard" && (
+							<div id="confirm">
+								<p>You have unsaved changes. Are you sure you would like to import a new data set?</p>
+								<div className="buttons">
+									<button className="cancel" onClick={closeOverlay}>
+										<p>Cancel</p>
+									</button>
+									<button onClick={() => selectUpload()}>
+										<p>Continue</p>
+									</button>
+								</div>
 							</div>
 						)}
 					</motion.div>

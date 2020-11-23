@@ -3,9 +3,7 @@ import React from 'react'
 import './CleanerTable.scss'
 import { DataSet } from '../core/DataSet'
 
-interface CleanerTableProps {
-	dataSet: DataSet,
-}
+interface CleanerTableProps { dataSet: DataSet }
 
 export default function CleanerTable({ dataSet }: CleanerTableProps) {
 	return (
@@ -24,7 +22,7 @@ export default function CleanerTable({ dataSet }: CleanerTableProps) {
 						<tr key={item._id}>
 							<td className="item-number"><p>{i + 1}</p></td>
 							{dataSet.columns.map((col, i) => (
-								<td key={item._id + " " + col + " " + i}>
+								<td key={item._id.toString() + i}>
 									{item[col]}
 								</td>
 							))}

@@ -2,7 +2,7 @@ import { DataSet, createDataItemID } from "../core/DataSet";
 
 export const TestDataSet: DataSet = {
 	lastModified: 0,
-	name: "Example Data",
+	name: "Example Data.csv",
 	columns: [
 		"Name",
 		"Phone",
