@@ -1,9 +1,7 @@
 import React from 'react'
-import TableScrollbar from 'react-table-scrollbar'
 
-import { DataSet } from '../core/DataSet'
 import './CleanerTable.scss'
-
+import { DataSet } from '../core/DataSet'
 
 interface CleanerTableProps {
 	dataSet: DataSet,

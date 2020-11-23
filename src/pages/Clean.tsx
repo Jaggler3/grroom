@@ -1,5 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import Loader from 'react-loader-spinner'
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 
 import './Clean.scss'
 import Header from '../components/Header'
@@ -31,7 +33,7 @@ export default function Clean() {
 	const [localMods, setLocalMods] = useState<Modifier[]>(LoadLocalMods())
 
 	const applyMod = (mod: Modifier, suggested: boolean) => {
-		if(suggested) {
+		if (suggested) {
 			const helpMod = mod as HelpModifier
 			setDataSet({ ...helpMod.helpEffect() })
 		} else {
@@ -40,6 +42,7 @@ export default function Clean() {
 	}
 
 	const startDownload = async (name: string, location: string) => {
+		setOverlayPurpose("loading")
 		const fileContents = (await (await fetch(UploaderURL + "/uploaded/" + location)).text()).trim()
 		const parsedDataSet = Deserialize(name, fileContents)
 		setShowOverlay(false)
@@ -53,7 +56,7 @@ export default function Clean() {
 		fileInput.multiple = false
 		fileInput.addEventListener("change", async (event) => {
 			const formData = new FormData()
-			if(fileInput.files) {
+			if (fileInput.files) {
 				formData.append('csv-file', fileInput.files[0])
 
 				const response = await (await fetch(UploaderURL + "/upload", {
@@ -61,7 +64,7 @@ export default function Clean() {
 					body: formData
 				})).json()
 
-				if(response.success) {
+				if (response.success) {
 					startDownload(response.name, response.location)
 				}
 			}
@@ -101,7 +104,7 @@ export default function Clean() {
 
 	const saveLocalMod = (initialName: string, mod: Modifier) => {
 		RemoveModFromCookies(initialName)
-		setLocalMods([ ...localMods.filter(x => x.name !== initialName), mod])
+		setLocalMods([...localMods.filter(x => x.name !== initialName), mod])
 		SaveMod(mod)
 	}
 
@@ -161,7 +164,7 @@ export default function Clean() {
 						{overlayPurpose === "preview" && (
 							<div id="mod-preview">
 								<h1>{selectedMod.name} (preview)</h1>
-								<br/>
+								<br />
 								<PreviewTable
 									beforeSet={dataSet}
 									afterSet={('helpEffect' in selectedMod) ? (selectedMod as HelpModifier).helpEffect() : LocalEffect(dataSet, selectedMod)}
@@ -183,6 +186,16 @@ export default function Clean() {
 								exit={closeOverlay}
 								saveMod={saveLocalMod}
 							/>
+						)}
+						{overlayPurpose === "loading" && (
+							<div id="loading">
+								<Loader
+									type="Oval"
+									color="#5697E3"
+									height={100}
+									width={100}
+								/>
+							</div>
 						)}
 					</motion.div>
 				)}
