@@ -1,5 +1,5 @@
-import { HelpModifier, ModifierGenerator, createModifierID } from "../core/Modifier"
-import { DataSet, DataItem, createDataItemID } from "../core/DataSet"
+import { HelpModifier, ModifierGenerator, createModifierID } from "../../core/Modifier"
+import { DataSet, DataItem, createDataItemID } from "../../core/DataSet"
 
 const TrimModifier: ModifierGenerator = (data: DataSet) => {
 	let modifiers: HelpModifier[] = []

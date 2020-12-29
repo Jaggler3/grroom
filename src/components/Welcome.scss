@@ -1,3 +1,5 @@
+@import '../colors.scss';
+
 #welcome {
 	width: 40em;
 	max-width: 95vw;
@@ -16,11 +18,23 @@
 	}
 
 	> #welcome-actions {
-		margin-top: 4em;
+		margin: 4em 0 3em 0;
 
 		> button {
 			width: 15em;
 			margin: 0 1em;
+		}
+	}
+
+	> #signup-suggest {
+		font-size: .75em;
+		opacity: .9;
+		cursor: default;
+
+		> a {
+			cursor: pointer;
+			font-weight: bold;
+			color: $button-color;
 		}
 	}
 }

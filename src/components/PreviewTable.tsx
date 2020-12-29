@@ -5,6 +5,8 @@ import './PreviewTable.scss'
 
 import { DataSet } from '../core/DataSet'
 
+import DynamicBody from './DynamicBody'
+
 interface PreviewTableProps {
 	beforeSet: DataSet,
 	afterSet: DataSet
@@ -36,20 +38,18 @@ export default function PreviewTable({ beforeSet, afterSet }: PreviewTableProps)
 						))}
 					</tr>
 				</thead>
-				<tbody>
-					{afterSet.items.map((item, i) => (
-						<tr key={item._id}>
-							<td className={"item-number" + (diff[i] ? " diff" : "")}>
-								<p>{i + 1}</p>
+				<DynamicBody data={afterSet.items} renderer={(item, i) => (
+					<tr key={item._id}>
+						<td className={"item-number" + (diff[i] ? " diff" : "")}>
+							<p>{i + 1}</p>
+						</td>
+						{afterSet.columns.map((col, j) => (
+							<td key={item._id + " " + col + " " + j} className={diff[i] ? "diff" : ""}>
+								<span className={(diff[i] && diff[i]![j]) ? "diff-column" : ""}>{item[col]}</span>
 							</td>
-							{afterSet.columns.map((col, j) => (
-								<td key={item._id + " " + col + " " + j} className={diff[i] ? "diff" : ""}>
-									<span className={(diff[i] && diff[i]![j]) ? "diff-column" : ""}>{item[col]}</span>
-								</td>
-							))}
-						</tr>
-					))}
-				</tbody>
+						))}
+					</tr>
+				)} />
 			</table>
 		</div>
 	)

@@ -14,13 +14,14 @@ export default function Welcome({ selectUpload, selectExample }: WelcomeProps) {
 			<p>To get started, select a data set to work with.</p>
 			<div id="welcome-actions">
 				<button onClick={selectUpload}>
-					<p>Upload</p>
+					<p>Upload CSV</p>
 				</button>
 				<span>or</span>
 				<button onClick={selectExample}>
 					<p>Use Example Data</p>
 				</button>
 			</div>
+			<p id="signup-suggest">Got a hefty file? <a href="/signup">Sign Up</a> to upload files larger than 5KB</p>
 		</div>
 	)
 }

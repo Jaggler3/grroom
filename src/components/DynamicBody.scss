@@ -1,0 +1,32 @@
+@import '../colors.scss';
+
+.dynamic {
+	position: relative;
+
+	.load-container {
+		position: absolute;
+		width: 100%;
+		text-align: center;
+		padding: 0;
+
+		> .load {
+			width: fit-content;
+			left: 0;
+			text-align: center;
+			background-color: $button-color;
+			padding: .75em 3em;
+			height: fit-content;
+			font-size: .8em;
+			border: none;
+			border-radius: 2em;
+			font-weight: 600;
+			outline: none;
+			cursor: pointer;
+	
+			> p {
+				color: white;
+				user-select: none;
+			}
+		}
+	}
+}

@@ -61,7 +61,6 @@ export default function Clean() {
 					body: formData
 				})).text()).trim()
 
-				console.log(fileContents)
 				const parsedDataSet = Deserialize(fileInput.files[0].name, fileContents)
 				setShowOverlay(false)
 				setChangesMade(false)

@@ -1,5 +1,5 @@
-import { HelpModifier, ModifierGenerator, createModifierID } from "../core/Modifier"
-import { DataSet, createDataItemID } from "../core/DataSet"
+import { HelpModifier, ModifierGenerator, createModifierID } from "../../core/Modifier"
+import { DataSet, createDataItemID } from "../../core/DataSet"
 
 const CapitalizeModifier: ModifierGenerator = (data: DataSet) => {
 	let modifiers: HelpModifier[] = []

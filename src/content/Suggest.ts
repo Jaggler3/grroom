@@ -1,7 +1,7 @@
-import { HelpModifier, createModifierID } from "../core/Modifier"
+import { HelpModifier } from "../core/Modifier"
 import { DataSet } from "../core/DataSet"
-import CapitalizeModifier from "./CapitalizeModifier";
-import TrimModifier from "./TrimModifier";
+import CapitalizeModifier from "./suggestions/CapitalizeModifier";
+import TrimModifier from "./suggestions/TrimModifier";
 
 const AllHelpModifiers = [
 	CapitalizeModifier,
@@ -25,7 +25,7 @@ export default function Suggest(oldSuggestions: HelpModifier[], data: DataSet) {
 
 	for(const oldSuggestion of oldSuggestions) {
 		for(const newSuggestion of suggestions) {
-			if(newSuggestion.name === newSuggestion.name) {
+			if(newSuggestion.name === oldSuggestion.name) {
 				newSuggestion.id = oldSuggestion.id
 				break
 			}
