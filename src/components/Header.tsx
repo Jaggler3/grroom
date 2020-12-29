@@ -11,6 +11,10 @@ export default function Header({ onImport }: HeaderProps) {
 			<button onClick={onImport}>
 				<p>Import</p>
 			</button>
+			<p className="space"></p>
+			<button id="account">
+				<i className="fas fa-user-plus"></i>
+			</button>
 		</header>
 	)
 }
