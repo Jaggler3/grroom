@@ -49,10 +49,3 @@ export default function DynamicBody({ data, renderer, initialAmount, incrementAm
 		</tbody>
 	)
 }
-
-const styles = {
-	root: {
-	} as CSSProperties,
-	loadMore: {
-	} as CSSProperties
-}
