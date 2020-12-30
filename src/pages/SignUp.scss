@@ -1,1 +1,16 @@
 @import '../colors'
+
+#signup {
+	> #header {
+		text-align: center;
+		> .service {
+			font-family: 4em;
+			font-family: 'Lobster', sans-serif;
+		}
+
+		> .title {
+			font-weight: bold;
+			font-family: 2.5em;
+		}
+	}
+}
