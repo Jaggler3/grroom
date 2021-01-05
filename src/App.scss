@@ -30,7 +30,24 @@ button {
 	}
 }
 
-button.disabled {
+button.disabled, button:disabled {
 	background-color: rgba($color: black, $alpha: 0.2);
 	cursor: not-allowed;
+}
+
+.form-input {
+	background-color: white;
+	border: none;
+	outline: none;
+	padding: .5em;
+	box-shadow: 0 .25em .5em rgba($color: black, $alpha: 0.2);
+	border-radius: .3em;
+	font-size: 1em;
+	margin-bottom: .5em;
+	transition: box-shadow .2s;
+	width: 15em;
+	
+	&:focus {
+		box-shadow: 0 .25em .5em rgba($color: black, $alpha: 0.4);
+	}
 }

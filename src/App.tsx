@@ -11,9 +11,12 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Switch>
-				<Route exact path="/" component={Clean} />
-				<Route exact path="/signup" component={SignUp} />
-				<Route exact path="/account" component={Account} />
+				<Route exact path="/" component={Clean} /> {/*
+				Not logged in: show tool
+				Logged in: show project list & new button, custom modifier list, logout button
+				*/}
+				<Route exact path="/signup" component={SignUp} /> {/* Email, password, plan, card info if paid plan */}
+				<Route exact path="/account" component={Account} /> {/* Billing, Plan */}
 			</Switch>
 		</BrowserRouter>
 	);
