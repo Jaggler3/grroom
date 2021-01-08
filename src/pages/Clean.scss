@@ -66,14 +66,6 @@
 		flex-direction: column;
 	}
 
-	> #loading {
-		width: 10em;
-		height: 10em;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
 	> #confirm {
 		@include dialog;
 		width: 30em;

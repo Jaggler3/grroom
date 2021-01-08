@@ -51,3 +51,19 @@ button.disabled, button:disabled {
 		box-shadow: 0 .25em .5em rgba($color: black, $alpha: 0.4);
 	}
 }
+
+#loading-container {
+	width: 100vw;
+	height: 50vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#loading-spinner {
+	width: 10em;
+	height: 10em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

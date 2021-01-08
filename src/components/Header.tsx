@@ -20,7 +20,7 @@ export default function Header({ signedIn, onImport, hideImport }: HeaderProps) 
 	const signOut = async () => {
 		await FirebaseApp.signOut()
 		Cookies.setSessionID(null)
-		history.push("/")
+		window.location.assign("/")
 	}
 
 	const signIn = () => {

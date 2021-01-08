@@ -27,7 +27,7 @@ export interface CleanProps {
 export default function Clean({ projectID, projectName }: CleanProps) {
 
 	const [dataSet, setDataSet] = useState<DataSet>(EmptyDataSet)
-	const [showOverlay, setShowOverlay] = useState(!projectID) // don't show overlay if there is a projectId
+	const [showOverlay, setShowOverlay] = useState(true) // no projectID: welcome screen, yes projectID: loading screen
 	const [overlayPurpose, setOverlayPurpose] = useState(projectID ? "loading" : "welcome")
 	const [selectedMod, setSelectedMod] = useState<Modifier>({ id: "", name: "", effect: "" })
 	const [previewType, setPreviewType] = useState("")
@@ -265,7 +265,7 @@ export default function Clean({ projectID, projectName }: CleanProps) {
 							/>
 						)}
 						{overlayPurpose === "loading" && (
-							<div id="loading">
+							<div id="loading-spinner">
 								<Loader
 									type="Oval"
 									color="#5697E3"

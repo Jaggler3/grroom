@@ -12,27 +12,28 @@ import { FirebaseApp } from './services/firebase';
 import Dashboard from './pages/Dashboard';
 import SignIn from './pages/SignIn';
 import Net from './net/Net';
+import Loader from 'react-loader-spinner';
 
 function CleanProject() {
 	const { projectID } = useParams<{ projectID?: string }>()
 
-	if(!projectID || projectID.length === 0) return <Redirect to={"/"} />
+	if (!projectID || projectID.length === 0) return <Redirect to={"/"} />
 
 	return <Clean projectID={projectID} />
 }
 
-function Loader({ hasSession, setHasSession }: { hasSession: boolean, setHasSession: (v: boolean) => void }) {
+function Root({ hasSession, setHasSession }: { hasSession: boolean, setHasSession: (v: boolean) => void }) {
 	const [loaded, setLoaded] = useState(false)
 
 	useEffect(() => {
 		(async () => {
 			await FirebaseApp.getServiceStatus()
-			if(FirebaseApp.isSignedIn() && !hasSession) {
-				if(await Net.verifySession()) {
+			if (FirebaseApp.isSignedIn() && !hasSession) {
+				if (await Net.verifySession()) {
 					setHasSession(true)
 				} else {
 					const result = await Net.submitSignIn()
-					if(result) {
+					if (result) {
 						setHasSession(true)
 					}
 				}
@@ -41,9 +42,20 @@ function Loader({ hasSession, setHasSession }: { hasSession: boolean, setHasSess
 		})()
 	}, [])
 
-	if(!loaded) return <p>Loading...</p>
+	if (!loaded) return (
+		<div id="loading-container">
+			<div id="loading-spinner">
+				<Loader
+					type="Oval"
+					color="#5697E3"
+					height={100}
+					width={100}
+				/>
+			</div>
+		</div>
+	)
 
-	if(FirebaseApp.isSignedIn()) {
+	if (FirebaseApp.isSignedIn()) {
 		return <Dashboard />
 	} else {
 		return <Clean />
@@ -57,7 +69,7 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Switch>
-				<Route exact path="/" component={() => <Loader hasSession={hasSession} setHasSession={(v) => setHasSession(v)} />} />
+				<Route exact path="/" component={() => <Root hasSession={hasSession} setHasSession={(v) => setHasSession(v)} />} />
 				<Route path="/project/:projectID" component={CleanProject} />
 				<Route path="/project" render={() => <Redirect to={"/"} />} />
 				<Route exact path="/signup" component={SignUp} />

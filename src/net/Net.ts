@@ -1,8 +1,7 @@
-import CookieNames from "../content/CookieNames"
 import Cookies from "../content/Cookies"
 import { FirebaseApp } from "../services/firebase"
 
-const ServerLoc = "http://localhost:8000"
+const ServerLoc = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "https://grroom-uploader.herokuapp.com"
 
 export const Get = (path: string) => fetch(ServerLoc + "/" + path)
 export const PostJson = (path: string, body: object) => fetch(ServerLoc + "/" + path, {
