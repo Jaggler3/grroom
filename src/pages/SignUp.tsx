@@ -1,18 +1,19 @@
 import React, { useState, ChangeEvent } from 'react'
 import { Elements, CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import { loadStripe, StripeCardElementChangeEvent } from '@stripe/stripe-js';
+import { loadStripe, StripeCardElementChangeEvent, PaymentMethod } from '@stripe/stripe-js';
 import * as EmailValidator from 'email-validator';
 
 import './SignUp.scss'
-import { PlanData } from '../business/Plans';
+import { PlanData } from '../content/Plans';
+import { FirebaseApp } from '../services/firebase';
+import Net from '../net/Net';
+import Cookies from '../content/Cookies';
+import DisplayError from '../components/DisplayError';
+import { useHistory } from 'react-router-dom';
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe('pk_test_51I3zN8APSwzhwjAkbKJzwHHyyUwQjrmypndifIKtImuPKU1QOo7fmesUww7tcZPIM9lO7VoJDNG1HZgoH9TtZ6DO00VoA7CeAo');
-
-const DisplayError = ({ errorText }: { errorText: string }) =>
-	(errorText !== "") ? <p className="error">{errorText}</p> : null;
-
 
 interface PlanListProps {
 	selectedPlan: string,
@@ -41,6 +42,8 @@ const PlanList = ({ selectedPlan, setSelectedPlan }: PlanListProps) => (
 )
 
 export default function SignUp() {
+
+	const history = useHistory()
 
 	const [selectedPlan, setSelectedPlan] = useState("Lite")
 
@@ -89,6 +92,46 @@ export default function SignUp() {
 		&& confirmPassword === password
 		&& (selectedPlan === "Lite" || cardComplete)
 
+	const onCardChange = (e: StripeCardElementChangeEvent) => {
+		setCardErr("")
+		setCardComplete(e.complete)
+	}
+
+	const submitInformation = async (paymentMethod?: PaymentMethod | null) => {
+		// firebase
+		const response = await (FirebaseApp.signUp(email, password).catch((error) => {
+			if (FirebaseApp.emailErrorCodes.includes(error.code)) {
+				setEmailErr(error.message)
+			} else if (FirebaseApp.passwordErrorCodes.includes(error.code)) {
+				setPasswordErr(error.message)
+			}
+		}))
+
+		if (!response) {
+			return
+		}
+
+		const user = response.user
+		if (!user) {
+			alert("An internal error occurred. [1262512]")
+			return
+		}
+
+
+		// backend
+		const idToken = await user.getIdToken()
+		const sessionID = await Net.submitCreateAccount(idToken, selectedPlan, paymentMethod ? paymentMethod.id : undefined)
+
+		// next steps
+		if (sessionID) {
+			Cookies.setSessionID(sessionID)
+			window.location.assign("/")
+		} else {
+			alert("An internal error occurred. [1234621]")
+			return
+		}
+	}
+
 	return (
 		<Elements stripe={stripePromise}>
 			<div id="signup">
@@ -100,72 +143,77 @@ export default function SignUp() {
 					</div>
 				</div>
 				<div id="right">
-					<p className="section">Account Information</p>
-					<p className="label">Email</p>
-					<input
-						type="text"
-						className="form-input"
-						spellCheck={false}
-						onChange={updateEmail}
-						onBlur={blurEmail}
-						value={email}
-					/>
-					<DisplayError errorText={emailErr} />
-					<p className="label">Password</p>
-					<input
-						type="password"
-						className="form-input"
-						onChange={updatePassword}
-						onBlur={blurPassword}
-						value={password}
-					/>
-					<DisplayError errorText={passwordErr} />
-					<p className="label">Confirm Password</p>
-					<input
-						type="password"
-						className="form-input"
-						onChange={updateConfirmPassword}
-						onBlur={blurConfirmPassword}
-						value={confirmPassword}
-					/>
-					<DisplayError errorText={confirmErr} />
-					<br />
-					<p id="signin-suggest">Already have an account? <a href="/signin">Sign In</a></p>
-					<p className="section">Select a plan</p>
-					<div id="plans">
-						<PlanList selectedPlan={selectedPlan} setSelectedPlan={setSelectedPlan} />
-						<DisplayError errorText={cardErr} />
-					</div>
-					{selectedPlan !== "Lite" && (
-						<>
-							<p className="section">Payment Information</p>
-							<p className="label">Card</p>
-							<div id="card-container">
-								<CardElement
-									options={{
-										style: {
-											base: {
-												color: "#424770",
-												letterSpacing: "0.025em",
-												fontFamily: "sans-serif",
-												"::placeholder": { color: "#aab7c4" },
-												backgroundColor: "white",
-												fontSize: "16px"
-											},
-											invalid: { color: "#9e2146" }
-										}
-									}}
-									onChange={(e: StripeCardElementChangeEvent) => {
-										setCardErr("")
-										setCardComplete(e.complete)
-									}}
-								/>
-							</div>
+					<div>
+						<p className="section">Account Information</p>
+						<p className="label">Email</p>
+						<input
+							type="text"
+							className="form-input"
+							spellCheck={false}
+							onChange={updateEmail}
+							onBlur={blurEmail}
+							value={email}
+						/>
+						<DisplayError errorText={emailErr} />
+						<p className="label">Password</p>
+						<input
+							type="password"
+							className="form-input"
+							onChange={updatePassword}
+							onBlur={blurPassword}
+							value={password}
+						/>
+						<DisplayError errorText={passwordErr} />
+						<p className="label">Confirm Password</p>
+						<input
+							type="password"
+							className="form-input"
+							onChange={updateConfirmPassword}
+							onBlur={blurConfirmPassword}
+							value={confirmPassword}
+						/>
+						<DisplayError errorText={confirmErr} />
+						<br />
+						<p id="signin-suggest">Already have an account? <a href="/signin">Sign In</a></p>
+						<p className="section">Select a plan</p>
+						<div id="plans">
+							<PlanList selectedPlan={selectedPlan} setSelectedPlan={setSelectedPlan} />
 							<DisplayError errorText={cardErr} />
-						</>
-					)}
-					<br />
-					<SubmitSignup hasErrors={hasErrors} setCardErr={(text) => setCardErr(text)} disabled={!hasValidInputs()} />
+						</div>
+						{selectedPlan !== "Lite" && (
+							<>
+								<p className="section">Payment Information</p>
+								<p className="label">Card</p>
+								<div id="card-container">
+									<CardElement
+										options={{
+											style: {
+												base: {
+													color: "#424770",
+													letterSpacing: "0.025em",
+													fontFamily: "sans-serif",
+													"::placeholder": { color: "#aab7c4" },
+													backgroundColor: "white",
+													fontSize: "16px"
+												},
+												invalid: { color: "#9e2146" }
+											}
+										}}
+										onChange={onCardChange}
+									/>
+								</div>
+								<DisplayError errorText={cardErr} />
+							</>
+						)}
+						<br />
+						<SubmitSignup
+							selectedPlan={selectedPlan}
+							hasErrors={hasErrors}
+							setCardErr={(text) => setCardErr(text)}
+							disabled={!hasValidInputs()}
+							onSuccess={submitInformation}
+						/>
+					</div>
 				</div>
 			</div>
 		</Elements>
@@ -173,34 +221,43 @@ export default function SignUp() {
 }
 
 interface SubmitSignupProps {
+	selectedPlan: string,
 	hasErrors: () => boolean,
 	setCardErr: (text: string) => void,
-	disabled: boolean
+	disabled: boolean,
+	onSuccess: (paymentMethod?: PaymentMethod | null) => void
 }
-function SubmitSignup({ disabled, hasErrors, setCardErr }: SubmitSignupProps) {
+function SubmitSignup({ selectedPlan, disabled, hasErrors, setCardErr, onSuccess }: SubmitSignupProps) {
 
 	const stripe = useStripe()
 	const stripeElements = useElements()
 
 	const submit = async () => {
-		if (!stripe || !stripeElements) {
-			return // still loading stripe
-		}
-
-		const cardElement = stripeElements.getElement(CardElement);
-
-		if (!cardElement) return
-
-		const { error, paymentMethod } = await stripe.createPaymentMethod({
-			type: 'card',
-			card: cardElement!,
-		});
-
-		if (error) {
-			console.log('[error]', error);
-			setCardErr("Invalid card information.")
+		if (selectedPlan === "Lite") {
+			onSuccess()
 		} else {
-			console.log('[PaymentMethod]', paymentMethod);
+			if (!stripe || !stripeElements) {
+				console.error("stripe not loaded")
+				return // still loading stripe
+			}
+
+			const cardElement = stripeElements.getElement(CardElement);
+
+			if (!cardElement) {
+				console.error("card element not loaded")
+			}
+
+			const { error, paymentMethod } = await stripe.createPaymentMethod({
+				type: 'card',
+				card: cardElement!,
+			});
+
+			if (error) {
+				console.error(error);
+				setCardErr("Invalid card information.")
+			} else {
+				onSuccess(paymentMethod)
+			}
 		}
 	}
 

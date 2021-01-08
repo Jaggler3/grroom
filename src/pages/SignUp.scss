@@ -44,108 +44,105 @@
 		padding: 5em;
 		box-sizing: border-box;
 
-		#signin-suggest {
-			cursor: default;
+		> div {
 
-			> a {
-				cursor: pointer;
-				font-weight: bold;
-				color: $button-color;
+			> #signin-suggest {
+				margin-top: .5em;
+				cursor: default;
+
+				> a {
+					cursor: pointer;
+					font-weight: bold;
+					color: $button-color;
+				}
 			}
-		}
 
-		.error {
-			color: red;
-			font-size: .75em;
-			font-weight: bold;
-		}
+			.label {
+				margin: 1em 0 0.5em 0;
+				cursor: default;
+			}
 
-		.label {
-			margin: 1em 0 0.5em 0;
-			cursor: default;
-		}
+			.section {
+				margin: 1em 0 0.5em 0;
+				font-size: 1.75em;
+				font-weight: bold;
+			}
 
-		.section {
-			margin: 1em 0 0.5em 0;
-			font-size: 1.75em;
-			font-weight: bold;
-		}
-
-		> #card-container {
-			box-shadow: 0 0.25em 0.5em rgba($color: black, $alpha: 0.2);
-			border-radius: 0.5em;
-			padding: 1em;
-			background-color: white;
-			margin-bottom: 1em;
-		}
-
-		> #plans {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			position: relative;
-
-			> .plan {
-				padding: 1em;
-				//background-color: darken($color: #f9f9f9, $amount: 5);
-				background-color: white;
+			> #card-container {
 				box-shadow: 0 0.25em 0.5em rgba($color: black, $alpha: 0.2);
-				border-radius: 1em;
-				margin: 0.5em;
-				margin-bottom: 0.5em;
-				width: calc(50% - 1em);
-				cursor: pointer;
-				box-sizing: border-box;
+				border-radius: 0.5em;
+				padding: 1em;
+				background-color: white;
+				margin-bottom: 1em;
+			}
+
+			> #plans {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
 				position: relative;
 
-				> p {
+				> .plan {
+					padding: 1em;
+					background-color: white;
+					box-shadow: 0 0.25em 0.5em rgba($color: black, $alpha: 0.2);
+					border-radius: 1em;
+					margin: 0.5em;
 					margin-bottom: 0.5em;
-					user-select: none;
-				}
+					width: calc(50% - 1em);
+					cursor: pointer;
+					box-sizing: border-box;
+					position: relative;
 
-				&.selected {
-					border: 0.1em solid $button-color;
-					padding: 0.85em;
-					box-shadow: 0 0.25em 0.5em rgba($color: black, $alpha: 0.4);
-				}
+					> p {
+						margin-bottom: 0.5em;
+						user-select: none;
+					}
 
-				> .plan-title {
-					font-size: 2em;
-					text-align: center;
-					margin-bottom: 0;
-				}
+					&.selected {
+						border: 0.1em solid $button-color;
+						padding: 0.85em;
+						box-shadow: 0 0.25em 0.5em rgba($color: black, $alpha: 0.4);
+					}
 
-				> .plan-price {
-					font-size: 1.5em;
-					font-weight: bold;
-					text-align: center;
-					margin-bottom: 0.5em;
-				}
+					> .plan-title {
+						font-size: 2em;
+						text-align: center;
+						margin-bottom: 0;
+					}
 
-				> .excluded {
-					text-decoration: line-through;
-					opacity: 0.5;
-				}
+					> .plan-price {
+						font-size: 1.5em;
+						font-weight: bold;
+						text-align: center;
+						margin-bottom: 0.5em;
+					}
 
-				> .most-popular {
-					position: absolute;
-					right: -0.5em;
-					top: -0.5em;
-					font-size: 0.9em;
-					color: white;
-					background-color: $button-color;
-					border-radius: 0.5em;
-					padding: 0.25em 0.5em 0.25em 0.5em;
-					font-weight: bold;
+					> .excluded {
+						text-decoration: line-through;
+						opacity: 0.5;
+					}
+
+					> .most-popular {
+						position: absolute;
+						right: -0.5em;
+						top: -0.5em;
+						font-size: 0.9em;
+						color: white;
+						background-color: $button-color;
+						border-radius: 0.5em;
+						padding: 0.25em 0.5em 0.25em 0.5em;
+						font-weight: bold;
+					}
 				}
 			}
-		}
 
-		> #submit-container {
-			text-align: center;
+			> #submit-container {
+				text-align: center;
 
-			> button {
-				margin-top: 2em;
+				> button {
+					margin-top: 2em;
+				}
 			}
 		}
 	}
@@ -175,6 +172,28 @@
 			max-height: none;
 			width: auto;
 			overflow: visible;
+			padding: 0 0 5em 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			> div {
+				max-width: 20em;
+				overflow: visible;
+
+				> #plans {
+					flex-direction: column;
+
+					.plan {
+						width: auto;
+
+						> p {
+							margin-bottom: 0;
+							user-select: auto;
+						}
+					}
+				}
+			}
 		}
 	}
 }

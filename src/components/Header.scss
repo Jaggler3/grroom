@@ -11,12 +11,23 @@ header {
 		flex: 1
 	}
 
-	> p {
+	> #service-name {
 		font-size: 2em;
 		font-weight: 800;
 		padding: 0.1em 1em;
 		font-family: 'Lobster', sans-serif;
 		user-select: none;
+	}
+
+	> #back {
+		cursor: pointer;
+		padding: 1em;
+		display: flex;
+		align-items: center;
+
+		> i {
+			margin: 0 1em 0 1em
+		}
 	}
 }
 
@@ -29,7 +40,7 @@ header {
 	transition: border-radius .25s;
 
 	&:hover {
-		border-radius: 0;
+		border-radius: .5em;
 
 		> i {
 			font-size: 1.35em;

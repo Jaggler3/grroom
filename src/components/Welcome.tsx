@@ -21,7 +21,7 @@ export default function Welcome({ selectUpload, selectExample }: WelcomeProps) {
 					<p>Use Example Data</p>
 				</button>
 			</div>
-			<p id="signup-suggest">Got a hefty file? <a href="/signup">Sign Up</a> or <a href="/signup">Log In</a> to upload files larger than 5KB</p>
+			<p id="signup-suggest">Got a hefty file? <a href="/signup">Sign Up</a> or <a href="/signin">Sign In</a> to upload files larger than 5KB</p>
 		</div>
 	)
 }

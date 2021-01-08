@@ -1,5 +1,6 @@
 enum CookieNames {
-	ModList = "grroom mod list"
+	ModList = "grroom mod list",
+	SessionID = "grroom session id"
 }
 
 export const GetModCookieName = (name: string) => "grroom mod - " + name

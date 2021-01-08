@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, ChangeEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Loader from 'react-loader-spinner'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
@@ -16,19 +16,53 @@ import ModEditor from '../components/ModEditor'
 import { ExampleModText } from '../content/ExampleMod'
 import { LoadLocalMods, LocalEffect, RemoveModFromCookies, SaveMod } from '../core/ModifierUtils'
 import { Deserialize, SaveFile, Serialize } from '../core/CSVSerialize'
+import Net from '../net/Net'
 
-const UploaderURL: string = "https://grroom-uploader.herokuapp.com"
 const FIVE_MBS: number = 5 * 1024 * 1024
 
-export default function Clean() {
+export interface CleanProps {
+	projectID?: string,
+	projectName?: string
+}
+export default function Clean({ projectID, projectName }: CleanProps) {
 
 	const [dataSet, setDataSet] = useState<DataSet>(EmptyDataSet)
-	const [showOverlay, setShowOverlay] = useState(true)
-	const [overlayPurpose, setOverlayPurpose] = useState("welcome")
+	const [showOverlay, setShowOverlay] = useState(!projectID) // don't show overlay if there is a projectId
+	const [overlayPurpose, setOverlayPurpose] = useState(projectID ? "loading" : "welcome")
 	const [selectedMod, setSelectedMod] = useState<Modifier>({ id: "", name: "", effect: "" })
 	const [previewType, setPreviewType] = useState("")
 	const [localMods, setLocalMods] = useState<Modifier[]>(LoadLocalMods())
 	const [changesMade, setChangesMade] = useState(false)
+	const [namedChanged, setNameChanged] = useState(false)
+	const [loading, setLoading] = useState(!!projectID)
+
+	useEffect(() => {
+		(async () => {
+			if (projectID) {
+				const projectContents = await Net.readProject(projectID)
+				if (projectContents) {
+					importString("", projectContents)
+				}
+			}
+		})()
+	}, [])
+
+	useEffect(() => {
+		(async () => {
+			if (loading && dataSet.items.length > 0) {
+				const info = await Net.getProjectInfo(projectID!)
+				if (info.name) {
+					setDataSet({
+						name: info.name,
+						items: dataSet.items,
+						lastModified: dataSet.lastModified,
+						columns: dataSet.columns
+					})
+					setLoading(false)
+				}
+			}
+		})()
+	}, [dataSet.items.length])
 
 	const applyMod = (mod: Modifier, suggested: boolean) => {
 		if (suggested) {
@@ -49,25 +83,27 @@ export default function Clean() {
 			const formData = new FormData()
 			if (fileInput.files) {
 				formData.append('csv-file', fileInput.files[0])
-				if(fileInput.files[0].size > FIVE_MBS) {
+				if (fileInput.files[0].size > FIVE_MBS) {
 					setOverlayPurpose("disallowed " + originState)
 					setShowOverlay(true)
 					return;
 				}
 
 				setOverlayPurpose("loading")
-				const fileContents = (await (await fetch(UploaderURL + "/upload", {
-					method: "POST",
-					body: formData
-				})).text()).trim()
-
-				const parsedDataSet = Deserialize(fileInput.files[0].name, fileContents)
-				setShowOverlay(false)
-				setChangesMade(false)
-				setDataSet(parsedDataSet)
+				const fileContents = await Net.uploadBounce(formData)
+				if (fileContents) {
+					importString(fileInput.files[0].name, fileContents)
+				}
 			}
 		})
 		fileInput.click()
+	}
+
+	const importString = (name: string, contents: string) => {
+		const parsedDataSet = Deserialize(name, contents.trim())
+		setShowOverlay(false)
+		setChangesMade(false)
+		setDataSet(parsedDataSet)
 	}
 
 	const selectExample = () => {
@@ -119,7 +155,7 @@ export default function Clean() {
 	}
 
 	const reopenUpload = () => {
-		if(changesMade) {
+		if (changesMade) {
 			setOverlayPurpose("confirm discard")
 			setShowOverlay(true)
 		} else {
@@ -132,29 +168,50 @@ export default function Clean() {
 		setChangesMade(false)
 	}
 
+	const createSave = async () => {
+		const oldPurpose = overlayPurpose
+		const wasShowing = showOverlay
+		setOverlayPurpose("loading")
+		setShowOverlay(true)
+		await Net.saveProject(projectID!, Serialize(dataSet), namedChanged, dataSet.name)
+		setShowOverlay(wasShowing)
+		setOverlayPurpose(oldPurpose)
+	}
+
 	const closeDisallowed = (originState: string) => {
 		setOverlayPurpose(originState)
-		if(originState === "none") {
+		if (originState === "none") {
 			setShowOverlay(false)
 		}
 	}
 
+	const updateName = (e: ChangeEvent<HTMLInputElement>) => {
+		setDataSet({ ...dataSet, name: e.target.value })
+		setNameChanged(true)
+	}
+
 	return (
 		<div id="main">
-			<Header onImport={reopenUpload} />
+			<Header signedIn={!!projectID} onImport={reopenUpload} />
 			<div id="top">
 				<div id="name">
 					<input
 						placeholder="Your data set name..."
 						value={dataSet.name}
-						onChange={(e) => setDataSet({ ...dataSet, name: e.target.value })}
+						onChange={updateName}
 						spellCheck={false}
 					/>
 				</div>
 				<div id="top-buttons">
-					<button onClick={createExport}>
-						<p>Export CSV</p>
-					</button>
+					{projectID ? (
+						<button onClick={createSave}>
+							<p>Save Project</p>
+						</button>
+					) : (
+							<button onClick={createExport}>
+								<p>Export CSV</p>
+							</button>
+						)}
 				</div>
 			</div>
 			<div id="center">
@@ -233,7 +290,7 @@ export default function Clean() {
 						{overlayPurpose.startsWith("disallowed") && (
 							<div id="disallowed">
 								<p><strong>Aw, snap.</strong></p>
-								<br/>
+								<br />
 								<p>Currently, Grroom only supports uploading files no larger than 5 MB.</p>
 								<div className="buttons">
 									<button onClick={() => closeDisallowed(overlayPurpose.split(" ")[1])}>
