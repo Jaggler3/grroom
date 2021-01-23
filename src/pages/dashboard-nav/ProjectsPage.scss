@@ -1,0 +1,119 @@
+@import '../../colors';
+
+#projects-page {
+	padding: 2em 2em 0 2em;
+
+	> #project-list {
+		max-width: 100%;
+		margin-top: 1em;
+
+		> #items {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+
+			> #new-project {
+				z-index: 0;
+				position: relative;
+				width: 20em;
+				border: 0.1em dashed gray;
+				border-radius: 0.75em;
+				box-sizing: border-box;
+				margin: 1em 1em 1em 0;
+				cursor: pointer;
+
+				> p {
+					cursor: pointer;
+					text-align: center;
+					z-index: 0;
+					padding: 4em 1em 1em 1em;
+					width: 100%;
+					box-sizing: border-box;
+
+					> i {
+						font-size: 0.85em;
+						margin-left: 0.5em;
+					}
+				}
+				> input {
+					cursor: pointer;
+					font-size: 1em;
+					position: absolute;
+					top: 0;
+					z-index: 1;
+					width: 100%;
+					height: 100%;
+					opacity: 0;
+				}
+			}
+
+			> .project-parent {
+				text-decoration: none;
+				color: black;
+				margin: 1em 1em 1em 0;
+				transition: margin .1s linear;
+
+				&:hover {
+					margin: .75em 1em 1.25em 0;
+				}
+
+				> .project {
+					position: relative;
+					min-width: 20em;
+					max-width: 20em;
+					min-height: 10em;
+					max-height: 10em;
+					border-radius: 0.75em;
+					box-sizing: border-box;
+					padding: 1em;
+					background-color: white;
+					box-shadow: 0 0.25em 0.5em rgba($color: black, $alpha: 0.2);
+					transition: box-shadow .1s linear;
+
+					&:hover {
+						box-shadow: 0 0.25em 0.75em rgba($color: black, $alpha: 0.3);
+
+						> .lower {
+							opacity: 1;
+						}
+					}
+
+					> .loading {
+						font-weight: normal;
+					}
+
+					> .project-name {
+						font-size: 1.25em;
+						font-weight: bold;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						max-height: 1.25em;
+						overflow: hidden;
+					}
+
+					> .lower {
+						margin-top: 3em;
+						opacity: 0;
+						transition: opacity .1s linear;
+						display: flex;
+
+						> .space { flex: 1; }
+
+						> .delete-project {
+							padding: .75em;
+							width: 3em;
+							@include thin-button;
+
+							> i {
+								color: $button-color;
+								font-size: 1.15em;
+								width: 1em;
+								margin-right: 0.5em;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

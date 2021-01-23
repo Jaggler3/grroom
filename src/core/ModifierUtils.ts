@@ -1,6 +1,8 @@
 import CookieNames, { GetModCookieName } from "../content/CookieNames";
 import { Modifier, createModifierID } from "./Modifier";
 import { DataSet } from "./DataSet";
+import { transform } from "@babel/standalone";
+import removeUseStrict from "babel-plugin-remove-use-strict"
 
 export const GetLocalMods = (): string[] => {
 	let list;
@@ -28,10 +30,26 @@ export const RemoveModFromCookies = (name: string) => {
 	localStorage.setItem(CookieNames.ModList, GetLocalMods().filter(x => x !== name).join("\n"))
 }
 
+export const TransformEffect = (code: string): string => {
+	try {
+		let newCode = (transform(code, {
+			presets: ['env'],
+			plugins: [removeUseStrict]
+		}).code || "").trim();
+		if(newCode.endsWith(";")) {
+			newCode = newCode.substring(0, newCode.length - 1)
+		}
+		return newCode
+	} catch (e) {
+		console.error(e)
+		return "() => {}"
+	}
+}
+
 export const LocalEffect = (original: DataSet, mod: Modifier): DataSet => {
 	let beforeItems = original.items;
 
-	const code = mod.effect.trim().replace("modify", "") + "(__rows, __cols)"
+	const code = TransformEffect(mod.effect.trim()).trim().replace("modify", "") + "(__rows, __cols)"
 
 	// @ts-ignore
 	if(Interpreter) {

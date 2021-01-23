@@ -2,6 +2,7 @@ import React, { useState, useEffect, ChangeEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Loader from 'react-loader-spinner'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+import { transform } from "@babel/standalone";
 
 import './Clean.scss'
 import Header from '../components/Header'
@@ -21,10 +22,9 @@ import Net from '../net/Net'
 const FIVE_MBS: number = 5 * 1024 * 1024
 
 export interface CleanProps {
-	projectID?: string,
-	projectName?: string
+	projectID?: string
 }
-export default function Clean({ projectID, projectName }: CleanProps) {
+export default function Clean({ projectID }: CleanProps) {
 
 	const [dataSet, setDataSet] = useState<DataSet>(EmptyDataSet)
 	const [showOverlay, setShowOverlay] = useState(true) // no projectID: welcome screen, yes projectID: loading screen
@@ -89,7 +89,6 @@ export default function Clean({ projectID, projectName }: CleanProps) {
 					return;
 				}
 
-				setOverlayPurpose("loading")
 				const fileContents = await Net.uploadBounce(formData)
 				if (fileContents) {
 					importString(fileInput.files[0].name, fileContents)
@@ -97,6 +96,15 @@ export default function Clean({ projectID, projectName }: CleanProps) {
 			}
 		})
 		fileInput.click()
+	}
+
+	const startLoading = () => {
+		setShowOverlay(true)
+		setOverlayPurpose("loading")
+	}
+
+	const endLoading = () => {
+		setShowOverlay(false)
 	}
 
 	const importString = (name: string, contents: string) => {
@@ -176,6 +184,7 @@ export default function Clean({ projectID, projectName }: CleanProps) {
 		await Net.saveProject(projectID!, Serialize(dataSet), namedChanged, dataSet.name)
 		setShowOverlay(wasShowing)
 		setOverlayPurpose(oldPurpose)
+		console.log("?")
 	}
 
 	const closeDisallowed = (originState: string) => {
@@ -203,15 +212,15 @@ export default function Clean({ projectID, projectName }: CleanProps) {
 					/>
 				</div>
 				<div id="top-buttons">
-					{projectID ? (
+					{projectID && (
 						<button onClick={createSave}>
-							<p>Save Project</p>
+							<p><i className="fas fa-save"></i>&nbsp; Save</p>
 						</button>
-					) : (
-							<button onClick={createExport}>
-								<p>Export CSV</p>
-							</button>
-						)}
+					)}
+					&nbsp;
+					<button onClick={createExport}>
+						<p><i className="fas fa-download"></i>&nbsp; Export</p>
+					</button>
 				</div>
 			</div>
 			<div id="center">
@@ -224,11 +233,14 @@ export default function Clean({ projectID, projectName }: CleanProps) {
 					localMods={localMods}
 					removeLocalMod={removeLocalMod}
 					editMod={editMod}
+					startLoading={startLoading}
+					endLoading={endLoading}
 				/>
 			</div>
 			<AnimatePresence>
 				{showOverlay && (
 					<motion.div
+						key="overlay"
 						id="overlay"
 						exit={{ opacity: 0 }}
 						animate={{ opacity: 1 }}

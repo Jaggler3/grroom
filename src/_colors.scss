@@ -4,7 +4,7 @@ $button-color: #5697E3;
 	background-color: transparent;
 	border: 2px solid $button-color;
 	
-	> p {
+	> p, > i {
 		color: $button-color;
 	}
 }

@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { transform } from "@babel/standalone";
 
 import AceEditor from "react-ace";
 
@@ -24,18 +25,28 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 	const [currentMod, setCurrentMod] = useState<Modifier>({
 		...initial
 	})
-	const [validated, setValidated] = useState(false)
+	const [validated, setValidated] = useState(true)
 	const [validationError, setValidationError] = useState<string>("")
 
 	const [saveNeeded, setSaveNeeded] = useState(false)
 	const [showSaveModal, setShowSaveModal] = useState(false)
 
-	const validate = () => {
+	const [lastValidationDate, setLastValidationDate] = useState<number | null>(null)
+
+	const validate = async () => {
 		setValidationError("")
 		if (currentMod.name.trim().length === 0) {
 			setValidationError("GrroomError: Name is empty")
 		}
-		let code = currentMod.effect
+		let code: string = currentMod.effect
+		try {
+			code = transform(code, { presets: ['env'] }).code || "";
+			code = code.substring('"use strict";\n\n'.length)
+		} catch (e) {
+			setValidationError(e + "")
+			setValidated(false)
+			return
+		}
 		function initFunc(interpreter: any, scope: any) {
 			interpreter.setProperty(scope, "modify", interpreter.createNativeFunction(function (res: any) { return res; }))
 		}
@@ -70,6 +81,17 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 		setSaveNeeded(true)
 	}
 
+	useEffect(() => {
+		const now = Date.now()
+		validate()
+		setLastValidationDate(now)
+	}, [currentMod.effect])
+
+	const updateName = (e: { target: { value: string }}) => {
+		setCurrentMod({ ...currentMod, name: e.target.value })
+		setSaveNeeded(true)
+	}
+
 	const closeEditor = () => {
 		if(saveNeeded) {
 			setShowSaveModal(true)
@@ -83,18 +105,21 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 	return (
 		<>
 			<div id="mod-editor">
-				<h3>{editing ? "New Mod" : "Editing Mod"}</h3>
+				<div id="editor-top">
+					<h3>{editing ? "New Mod" : "Editing Mod"}</h3>
+					<a id="help" href="https://github.com/Jaggler3/grroom/#custom-modifiers" rel="noreferrer" target="_blank">Need help?</a>
+				</div>
 				<button id="mod-editor-close" onClick={closeEditor}>
 					<p><i className="fas fa-times"></i></p>
 				</button>
 				<div id="editor-name-parent">
 					<input
 						value={currentMod.name}
-						onChange={(e) => setCurrentMod({ ...currentMod, name: e.target.value })}
+						onChange={updateName}
 						placeholder="Modifier Name..."
 					/>
 				</div>
-				<p id="editor-ace-label">JavaScript (ES5 Only)</p>
+				<p id="editor-ace-label">JavaScript</p>
 				<AceEditor
 					mode="javascript"
 					theme="kuroir"
@@ -117,20 +142,16 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 					)}
 					{validated && (
 						<div id="success">
-							<p><i className="fas fa-check"></i>&nbsp;Validation successful. Your modifier code has no problems.</p>
+							<p><i className="fas fa-check"></i>Your modifier code has no problems.</p>
 						</div>
 					)}
 				</div>
 				<div id="editor-buttons">
-					<button onClick={validate}>
-						<p>Validate</p>
-					</button>
-					<button onClick={save} className={!validated ? "disabled" : ""}>
+					<button onClick={save} className={(!validated || !saveNeeded) ? "disabled" : ""}>
 						<p>Save</p>
 					</button>
 				</div>
 				<br/>
-				<a id="help" href="https://github.com/Jaggler3/grroom/#custom-modifiers" rel="noreferrer" target="_blank">Need help?</a>
 				{showSaveModal && <div id="mod-save">
 					<div id="save-modal">
 						<p>You have unsaved changes. Would you like to validate and save?</p>

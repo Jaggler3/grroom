@@ -1,8 +1,6 @@
 import React from 'react'
 
 import './Header.scss'
-import { FirebaseApp } from '../services/firebase'
-import Cookies from '../content/Cookies'
 import { useHistory } from 'react-router-dom'
 
 interface HeaderProps {
@@ -16,16 +14,6 @@ export default function Header({ signedIn, onImport, hideImport }: HeaderProps) 
 	const history = useHistory()
 
 	const isDashboard = window.location.pathname === "/"
-
-	const signOut = async () => {
-		await FirebaseApp.signOut()
-		Cookies.setSessionID(null)
-		window.location.assign("/")
-	}
-
-	const signIn = () => {
-		history.push("/signin")
-	}
 
 	const backToDashboard = () => {
 		history.push("/")
@@ -45,10 +33,6 @@ export default function Header({ signedIn, onImport, hideImport }: HeaderProps) 
 				</button>
 			)}
 			<p id="service-name">Grroom</p>
-			<p className="space"></p>
-			<button id="account" onClick={signedIn ? signOut : signIn}>
-				<i className={signedIn ? "fas fa-door-open" : "fas fa-user-plus"}></i>
-			</button>
 		</header>
 	)
 }

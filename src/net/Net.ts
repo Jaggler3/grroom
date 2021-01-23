@@ -144,6 +144,28 @@ const Net = {
 		}
 
 		return response.projectID
+	},
+	getHostedMods: async (): Promise<string[]> => {
+		const sessionID = Cookies.getSessionID()
+		const request = await Get("mod/list?sessionID=" + sessionID)
+		const response = await request.json()
+
+		if(response.status === "failure") {
+			return []
+		}
+
+		return response.modList
+	},
+	readHostedMod: async (modID: string): Promise<string> => {
+		const sessionID = Cookies.getSessionID()
+		const request = await Get(`mod/read?sessionID=${sessionID}&modID=${modID}`)
+		const response = await request.json()
+
+		if(response.status === "failure") {
+			return ""
+		}
+
+		return response.script
 	}
 }
 

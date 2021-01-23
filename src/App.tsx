@@ -22,7 +22,7 @@ function CleanProject() {
 	return <Clean projectID={projectID} />
 }
 
-function Root({ hasSession, setHasSession }: { hasSession: boolean, setHasSession: (v: boolean) => void }) {
+function Root({ match, hasSession, setHasSession }: { match: any, hasSession: boolean, setHasSession: (v: boolean) => void }) {
 	const [loaded, setLoaded] = useState(false)
 
 	useEffect(() => {
@@ -56,7 +56,7 @@ function Root({ hasSession, setHasSession }: { hasSession: boolean, setHasSessio
 	)
 
 	if (FirebaseApp.isSignedIn()) {
-		return <Dashboard />
+		return <Dashboard match={match} />
 	} else {
 		return <Clean />
 	}
@@ -69,12 +69,12 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Switch>
-				<Route exact path="/" component={() => <Root hasSession={hasSession} setHasSession={(v) => setHasSession(v)} />} />
 				<Route path="/project/:projectID" component={CleanProject} />
 				<Route path="/project" render={() => <Redirect to={"/"} />} />
 				<Route exact path="/signup" component={SignUp} />
 				<Route exact path="/signin" component={SignIn} />
 				<Route exact path="/account" component={Account} /> {/* Billing, Plan */}
+				<Route path="/" component={({ match }: { match: any }) => <Root match={match} hasSession={hasSession} setHasSession={(v) => setHasSession(v)} />} />
 			</Switch>
 		</BrowserRouter>
 	);

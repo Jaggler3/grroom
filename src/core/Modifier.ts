@@ -14,3 +14,5 @@ export interface HelpModifier extends Modifier {
 }
 
 export type ModifierGenerator = (data: DataSet) => HelpModifier[] | null
+
+export const GetModifierName = (modNameID: string) => modNameID.split("|||")[0]

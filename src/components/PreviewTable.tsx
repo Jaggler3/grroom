@@ -17,6 +17,10 @@ const getDiff = (beforeSet: DataSet, afterSet: DataSet): (boolean[] | undefined)
 		const compareItem = afterSet.items[i]
 		let changed = []
 		for (const col of beforeSet.columns) {
+			if(!compareItem) {
+				changed.push(true)
+				continue
+			}
 			changed.push(beforeItem[col] !== compareItem[col])
 		}
 		return changed.every((col) => col === false) ? undefined : changed
@@ -24,7 +28,7 @@ const getDiff = (beforeSet: DataSet, afterSet: DataSet): (boolean[] | undefined)
 )
 
 export default function PreviewTable({ beforeSet, afterSet }: PreviewTableProps) {
-
+	console.log(beforeSet, afterSet)
 	const [diff] = useState(getDiff(beforeSet, afterSet))
 
 	return (

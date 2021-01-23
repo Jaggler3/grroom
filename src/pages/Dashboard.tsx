@@ -1,120 +1,91 @@
-import React, { useState, useEffect, ChangeEvent } from 'react'
-import { DateTime } from "luxon"
-import bytes from "bytes"
+import React, { useState } from 'react'
 
-import Header from '../components/Header'
 import './Dashboard.scss'
-import Net from '../net/Net'
-import { Project } from '../core/Project'
+import { Switch, Route, useHistory } from 'react-router-dom'
+import ProjectsPage from './dashboard-nav/ProjectsPage'
 
-// show project list & new button, custom modifier list, logout button
-export default function Dashboard() {
+interface SidebarItemData {
+	name: string,
+	icon: string,
+	action: (props?: any) => boolean
+}
 
-	const [data, setData] = useState(null)
+interface SidebarItemProps {
+	data: SidebarItemData,
+	active: boolean,
+	onClick: () => any
+}
 
-	const [error, setError] = useState("")
+const SidebarItem = ({ data: { name, icon, action }, active, onClick }: SidebarItemProps) => {
+	return (
+		<div
+			className={"sidebar-item" + (active ? " active" : "")}
+			onClick={() => {
+				if(action()) {
+					onClick();
+				}
+			}}
+		>
+			<i className={icon}></i>
+			<p>{name}</p>
+		</div>
+	)
+}
 
-	useEffect(() => {
-		(async () => {
-			const projects = await Net.getProjects()
-			if (projects) {
-				setData(projects.filter((x: Project) => x !== null && x.projectID !== "!")) //remove array initializers
-			} else {
-				setError("Could not load project list.")
+export default function Dashboard({ match }: { match: any }) {
+
+	const history = useHistory()
+
+	const [activeItem, setActiveItem] = useState<string>("Projects")
+
+	const logout = () => { }
+
+
+	const sidebarItems: SidebarItemData[] = [
+		{
+			name: "Projects",
+			icon: "fas fa-file",
+			action: () => {
+				history.push("/")
+				return true
 			}
-		})()
-	}, [])
-
-	const submitNewProject = async (e: ChangeEvent<HTMLInputElement>) => {
-		const files = e.target.files
-
-		if(files && files.length > 0) {
-			const file = files[0]
-
-			const formData = new FormData()
-			formData.append('csv-file', file)
-
-			const projectID = await Net.createProject(file, fileTooLarge)
-			if (projectID) {
-				window.location.assign("/project/" + projectID)
+		},
+		{
+			name: "Settings",
+			icon: "fas fa-cog",
+			action: () => {
+				history.push("/settings")
+				return true
 			}
-		}
-	}
-
-	const fileTooLarge = () => {
-		alert("Your file is too large. Consider upgrading your account to upload larger files.")
-	}
+		},
+		{
+			name: "Logout",
+			icon: "fas fa-door-open",
+			action: () => {
+				logout()
+				return false
+			}
+		},
+	]
 
 	return (
 		<div id="dashboard">
-			<Header hideImport signedIn/>
-			<div id="content">
-				<h1>Projects</h1>
-				{error === "" ? (
-					<div id="project-list">
-						<div id="new-project">
-							<p>New Project <i className="fas fa-plus"></i></p>
-							<input
-								id="file-upload"
-								type="file"
-								name="csv-file"
-								accept="csv"
-								multiple={false}
-								onChange={(e) => submitNewProject(e)}
-							></input>
-						</div>
-						{data ? (
-							<ProjectList data={data} />
-						) : (
-								<>
-									<br />
-									<div className="project">
-										<p className="loading">Loading...</p>
-									</div>
-								</>
-							)}
-					</div>
-				) : (
-						<p>Error: {error}</p>
-					)}
+			<div id="sidebar">
+				<p id="title">Grroom</p>
+				{sidebarItems.map((item) => (
+					<SidebarItem
+						data={item}
+						active={activeItem === item.name}
+						onClick={() => setActiveItem(item.name)}
+					/>
+				))}
 			</div>
-		</div>
-	)
-}
-
-interface ProjectListProps {
-	data: Project[] | null
-}
-function ProjectList({ data }: ProjectListProps) {
-
-	if (data && data.length === 0) return (
-		<div>
-			<br />
-			<p>No projects to show.</p>
-		</div>
-	)
-
-	return (
-		<div id="items">
-			<br />
-			{data?.map((project) => (
-				<a href={"/project/" + project.projectID} key={project.projectID}>
-					<div
-						className="project"
-					>
-						<p className="project-name">{project.name}</p>
-						<div className="lower">
-							<p>
-								<i className="far fa-clock"></i>
-								{" "}
-								{DateTime.fromMillis(project.modified).toLocaleString(DateTime.DATETIME_MED)}
-							</p>
-							<p className="space"></p>
-							<p><i className="far fa-save"></i> {bytes(project.bytes)}</p>
-						</div>
-					</div>
-				</a>
-			))}
+			<div id="content">
+				<Switch>
+					<Route path={`${match.url}/`} exact component={ProjectsPage} />
+					<Route path={`${match.url}/settings`} component={() => <p>Settings</p>} />
+				</Switch>
+			</div>
 		</div>
 	)
 }

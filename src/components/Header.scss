@@ -30,26 +30,3 @@ header {
 		}
 	}
 }
-
-#account {
-	padding: 0;
-	width: 4em;
-	height: 4em;
-	border-radius: 2em;
-	border-top-right-radius: 0;
-	transition: border-radius .25s;
-
-	&:hover {
-		border-radius: .5em;
-
-		> i {
-			font-size: 1.35em;
-		}
-	}
-
-	> i {
-		color: white;
-		font-size: 1.25em;
-		transition: font-size .25s
-	}
-}

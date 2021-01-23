@@ -31,7 +31,7 @@ export const SaveFile = (name: string, fileContents: string) => {
 }
 
 export const Deserialize = (name: string, fileContents: string): DataSet => {
-	const parsed = PapaParse.parse(fileContents)
+	const parsed = PapaParse.parse(fileContents.trim())
 	const count = parsed.data.length
 
 	let result: DataSet = {
