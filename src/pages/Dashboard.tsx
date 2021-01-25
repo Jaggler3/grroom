@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import './Dashboard.scss'
 import { Switch, Route, useHistory } from 'react-router-dom'
 import ProjectsPage from './dashboard-nav/ProjectsPage'
+import SettingsPage from './dashboard-nav/SettingsPage'
 
 interface SidebarItemData {
 	name: string,
@@ -44,7 +45,7 @@ export default function Dashboard({ match }: { match: any }) {
 	const sidebarItems: SidebarItemData[] = [
 		{
 			name: "Projects",
-			icon: "fas fa-file",
+			icon: "far fa-sticky-note",
 			action: () => {
 				history.push("/")
 				return true
@@ -82,8 +83,8 @@ export default function Dashboard({ match }: { match: any }) {
 			</div>
 			<div id="content">
 				<Switch>
-					<Route path={`${match.url}/`} exact component={ProjectsPage} />
-					<Route path={`${match.url}/settings`} component={() => <p>Settings</p>} />
+					<Route path="/settings" component={SettingsPage} />
+					<Route path="/" component={ProjectsPage} />
 				</Switch>
 			</div>
 		</div>

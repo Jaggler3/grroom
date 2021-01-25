@@ -48,3 +48,10 @@ export const PlanData: Plan[] = [
 		mostPopular: false
 	}
 ]
+
+export const PlanDataByName: { [key: string]: Plan } = {
+	"Lite": PlanData[0],
+	"Basic": PlanData[1],
+	"Premium": PlanData[2],
+	"Pro": PlanData[3],
+}

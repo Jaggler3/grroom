@@ -5,6 +5,7 @@ import { Project } from '../../core/Project'
 import ProjectList from '../../components/ProjectList'
 
 import './ProjectsPage.scss'
+import Loader from 'react-loader-spinner'
 
 export default function ProjectsPage() {
 
@@ -27,7 +28,7 @@ export default function ProjectsPage() {
 	const submitNewProject = async (e: ChangeEvent<HTMLInputElement>) => {
 		const files = e.target.files
 
-		if(files && files.length > 0) {
+		if (files && files.length > 0) {
 			const file = files[0]
 
 			const formData = new FormData()
@@ -43,22 +44,26 @@ export default function ProjectsPage() {
 	const fileTooLarge = () => {
 		alert("Your file is too large. Consider upgrading your account to upload larger files.")
 	}
-	
+
 	return (
-		<div id="projects-page">
+		<div className="dashboard-page">
 			<h1>Projects</h1>
 			{error === "" ? (
 				<div id="project-list">
 					{data ? (
 						<ProjectList data={data} submitNewProject={submitNewProject} />
 					) : (
-							<>
-								<br />
-								<div className="project">
-									<p className="loading">Loading...</p>
-								</div>
-							</>
-						)}
+						<div id="loading-container">
+							<div id="loading-spinner">
+								<Loader
+									type="Oval"
+									color="#5697E3"
+									height={100}
+									width={100}
+								/>
+							</div>
+						</div>
+					)}
 				</div>
 			) : (
 					<p>Error: {error}</p>

@@ -13,6 +13,8 @@ import Dashboard from './pages/Dashboard';
 import SignIn from './pages/SignIn';
 import Net from './net/Net';
 import Loader from 'react-loader-spinner';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 
 function CleanProject() {
 	const { projectID } = useParams<{ projectID?: string }>()
@@ -62,20 +64,24 @@ function Root({ match, hasSession, setHasSession }: { match: any, hasSession: bo
 	}
 }
 
+const stripePromise = loadStripe('pk_test_51I3zN8APSwzhwjAkbKJzwHHyyUwQjrmypndifIKtImuPKU1QOo7fmesUww7tcZPIM9lO7VoJDNG1HZgoH9TtZ6DO00VoA7CeAo');
+
 function App() {
 
 	const [hasSession, setHasSession] = useState(false)
 
 	return (
 		<BrowserRouter>
-			<Switch>
-				<Route path="/project/:projectID" component={CleanProject} />
-				<Route path="/project" render={() => <Redirect to={"/"} />} />
-				<Route exact path="/signup" component={SignUp} />
-				<Route exact path="/signin" component={SignIn} />
-				<Route exact path="/account" component={Account} /> {/* Billing, Plan */}
-				<Route path="/" component={({ match }: { match: any }) => <Root match={match} hasSession={hasSession} setHasSession={(v) => setHasSession(v)} />} />
-			</Switch>
+			<Elements stripe={stripePromise}>
+				<Switch>
+					<Route path="/project/:projectID" component={CleanProject} />
+					<Route path="/project" render={() => <Redirect to={"/"} />} />
+					<Route exact path="/signup" component={SignUp} />
+					<Route exact path="/signin" component={SignIn} />
+					<Route exact path="/account" component={Account} /> {/* Billing, Plan */}
+					<Route path="/" component={({ match }: { match: any }) => <Root match={match} hasSession={hasSession} setHasSession={(v) => setHasSession(v)} />} />
+				</Switch>
+			</Elements>
 		</BrowserRouter>
 	);
 }

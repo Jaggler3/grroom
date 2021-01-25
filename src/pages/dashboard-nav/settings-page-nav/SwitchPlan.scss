@@ -1,0 +1,17 @@
+#switch-plan {
+	> #plan-list-wrapper {
+
+		> div {
+			display: flex;
+			flex-wrap: wrap;
+
+			> .plan {
+				width: 15em;
+			}
+		}
+	}
+
+	> #confirm {
+		width: 20em;
+	}
+}
