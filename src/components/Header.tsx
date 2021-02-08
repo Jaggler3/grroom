@@ -6,23 +6,20 @@ import { useHistory } from 'react-router-dom'
 interface HeaderProps {
 	onImport?: () => void,
 	hideImport?: boolean,
-	signedIn: boolean
+	signedIn: boolean,
+	onBack?: () => any
 }
 
-export default function Header({ signedIn, onImport, hideImport }: HeaderProps) {
+export default function Header({ signedIn, onImport, hideImport, onBack }: HeaderProps) {
 
 	const history = useHistory()
 
 	const isDashboard = window.location.pathname === "/"
 
-	const backToDashboard = () => {
-		history.push("/")
-	}
-
 	return (
 		<header>
 			{signedIn && !isDashboard && (
-				<p id="back" onClick={backToDashboard}>
+				<p id="back" onClick={onBack}>
 					<i className="fas fa-arrow-left"></i>
 					<span>Dashboard</span>
 				</p>

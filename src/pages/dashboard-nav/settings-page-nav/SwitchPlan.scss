@@ -1,13 +1,11 @@
 #switch-plan {
 	> #plan-list-wrapper {
 
-		> div {
-			display: flex;
-			flex-wrap: wrap;
+		display: flex;
+		flex-wrap: wrap;
 
-			> .plan {
-				width: 15em;
-			}
+		> .plan {
+			width: 15em;
 		}
 	}
 

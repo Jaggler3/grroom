@@ -9,7 +9,7 @@ interface PlanListProps {
 	setSelectedPlan: (value: string) => void
 }
 const PlanList = ({ selectedPlan, setSelectedPlan }: PlanListProps) => (
-	<div>
+	<>
 		{PlanData.map(({ name, price, desc, excluded, mostPopular }, i) => (
 			<div
 				onClick={() => setSelectedPlan(name)}
@@ -27,7 +27,7 @@ const PlanList = ({ selectedPlan, setSelectedPlan }: PlanListProps) => (
 				))}
 			</div>
 		))}
-	</div>
+	</>
 )
 
 export default PlanList

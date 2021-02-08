@@ -88,3 +88,7 @@ button.disabled, button:disabled {
 .flex {
 	display: flex;
 }
+
+.thin-button {
+	@include thin-button
+}

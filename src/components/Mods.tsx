@@ -16,7 +16,8 @@ interface ModsProps {
 	removeLocalMod: (mod: Modifier) => void,
 	editMod: (mod: Modifier) => void,
 	startLoading: () => void,
-	endLoading: () => void
+	endLoading: () => void,
+	premium: boolean
 }
 
 /*
@@ -25,14 +26,14 @@ interface HostedModCache {
 }
 */
 
-export default function Mods({ dataSet, localMods, applyMod, previewMod, newMod, removeLocalMod, editMod }: ModsProps) {
+export default function Mods({ premium, dataSet, localMods, applyMod, previewMod, newMod, removeLocalMod, editMod }: ModsProps) {
 
 	// const [hostedMods, setHostedMods] = useState<string[]>([])
 	const [suggestions, setSuggestions] = useState<HelpModifier[]>([])
 
 	// const [cachedMods, setCachedMods] = useState<HostedModCache>({})
 
-	useEffect(() => setSuggestions((suggestions) => Suggest(suggestions, dataSet)), [dataSet])
+	useEffect(() => setSuggestions((suggestions) => Suggest(premium, suggestions, dataSet)), [dataSet])
 	/*
 	useEffect(() => {
 		(async () => {
@@ -110,31 +111,13 @@ export default function Mods({ dataSet, localMods, applyMod, previewMod, newMod,
 									editMod={editMod}
 								/>
 							))}
-							<br />
+							<br key="space-label-1" />
 						</>
 					)}
-					{/*hostedMods.length > 0 && (
-						<>
-							<h3 key="suggestion-label">Custom Mods</h3>
-							<br key="space-label" />
-						</>
-					)}
-					{hostedMods.map((modNameID, i) => (
-						<HostedModCard
-							key={modNameID}
-							indexForDelay={i}
-							modNameID={modNameID}
-							applyMod={applyHostedMod}
-							previewMod={previewHostedMod}
-							removeMod={removeHostedMod}
-							editMod={editHostedMod}
-							deleteMod={deleteHostedMod}
-						/>
-					))*/}
 					{suggestions.length > 0 && (
 						<div key="suggestion-label">
-							<h3 >Suggestions</h3>
-							<br key="space-label" />
+							<h3 key="suggestion-label-text">Suggestions</h3>
+							<br key="space-label-2" />
 						</div>
 					)}
 					{suggestions.map((helpMod, i) => (
@@ -180,15 +163,16 @@ function ModCard({ helper, indexForDelay, mod, previewMod, removeMod, applyMod, 
 			}}
 			exit={{
 				opacity: 0,
-				scale: 0.5
+				scale: 0.75
 			}}
 		>
 			<div className="modifier-top">
-				<h2>{mod.name}</h2>
+				<h2>{mod.name} {mod.premium && <p className="premium-label">(PREMIUM)</p>}</h2>
 				{helper && <button onClick={() => removeMod(mod)}>
 					<p><i className="fas fa-times"></i></p>
 				</button>}
 			</div>
+			
 			{helper && <p>{(mod as HelpModifier).desc}</p>}
 			<div className="modifier-buttons">
 				<button onClick={() => previewMod(mod, helper)}>

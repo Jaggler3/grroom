@@ -1,7 +1,8 @@
 import Cookies from "../content/Cookies"
 import { FirebaseApp } from "../services/firebase"
+import { Project } from "../core/Project"
 
-const ServerLoc = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "https://grroom-uploader.herokuapp.com"
+const ServerLoc = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "http://grroom.eastus.cloudapp.azure.com:8080"
 
 export const Get = (path: string) => fetch(ServerLoc + "/" + path)
 export const PostJson = (path: string, body: object) => fetch(ServerLoc + "/" + path, {
@@ -19,6 +20,17 @@ export const PostForm = (path: string, formData: FormData) => fetch(ServerLoc + 
 	},
 	body: formData
 })
+
+export interface ProjectListResponse {
+	projects: Project[],
+	projectCap: number
+}
+
+export interface InfoResponse {
+	status: string,
+	plan: string,
+	pmID?: string
+}
 
 const Net = {
 	/**
@@ -47,7 +59,6 @@ const Net = {
 		const request = await Get("user/signin?idToken=" + token)
 
 		const result = await request.json()
-		console.log(result)
 
 		if (result.status === "success") {
 			Cookies.setSessionID(result.sessionID)
@@ -63,19 +74,37 @@ const Net = {
 		}
 		const request = await Get("session/verify?sessionID=" + oldSession)
 		const result = await request.json().catch(console.error)
-		console.log(result)
 		return result && result.status === "success"
 	},
-	getProjects: async () => {
+	getUserInfo: async (): Promise<InfoResponse | null> => {
+		const request = await Get("userinfo/info?sessionID=" + Cookies.getSessionID())
+		const result = await request.json().catch(console.error)
+		if(result && result.status === "success") {
+			return result as InfoResponse
+		}
+		return null
+	},
+	switchPlan: async (plan: string, pmID?: string) => {
+		const request = await Get(`userinfo/switchPlan?sessionID=${Cookies.getSessionID()}&plan=${plan}&pmID=${pmID || ""}`)
+		await request.json().catch(console.error)
+	},
+	updateCard: async (pmID: string) => {
+		const request = await Get(`userinfo/updateCard?sessionID=${Cookies.getSessionID()}&pmID=${pmID || ""}`)
+		await request.json().catch(console.error)
+	},
+	getProjects: async (): Promise<ProjectListResponse> => {
 		const request = await Get("project/list?sessionID=" + Cookies.getSessionID())
 
 		const result = await request.json().catch(console.error)
 
 		if (result.status === "success") {
-			return result.projects
+			return {
+				projects: result.projects,
+				projectCap: result.projectCap
+			}
 		}
 
-		return null
+		return { projects: [], projectCap: 0 }
 	},
 	readProject: async (projectID: string) => {
 		const request = await Get(`project/read?sessionID=${Cookies.getSessionID()}&projectID=${projectID}`)
@@ -144,6 +173,13 @@ const Net = {
 		}
 
 		return response.projectID
+	},
+	deleteProject: async (projectID: string) => {
+		const sessionID = Cookies.getSessionID()
+		const request = await Get(`project/delete?sessionID=${sessionID}&projectID=${projectID}`)
+		const response = await request.json()
+
+		return response.status !== "failure"
 	},
 	getHostedMods: async (): Promise<string[]> => {
 		const sessionID = Cookies.getSessionID()

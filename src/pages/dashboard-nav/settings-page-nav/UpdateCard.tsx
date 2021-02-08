@@ -5,6 +5,7 @@ import DisplayError from '../../../components/DisplayError'
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useHistory } from 'react-router-dom'
 import { StripeCardElementChangeEvent } from '@stripe/stripe-js'
+import Net from '../../../net/Net'
 
 export default function UpdateCard() {
 
@@ -21,8 +22,29 @@ export default function UpdateCard() {
 	}
 
 	const confirmUpdateCard = async () => {
-		// await whatever
-		history.goBack()
+		if (!stripe || !stripeElements) {
+			console.error("stripe not loaded")
+			return // still loading stripe
+		}
+
+		const cardElement = stripeElements.getElement(CardElement);
+
+		if (!cardElement) {
+			console.error("card element not loaded")
+		}
+
+		const { error, paymentMethod } = await stripe.createPaymentMethod({
+			type: 'card',
+			card: cardElement!,
+		});
+
+		if (error || !paymentMethod?.id) {
+			console.error(error);
+			setCardErr("Invalid card information.")
+		} else {
+			await Net.updateCard(paymentMethod.id)
+			history.goBack()
+		}
 	}
 
 	return (

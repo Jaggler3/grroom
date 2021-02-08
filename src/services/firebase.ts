@@ -21,6 +21,9 @@ export const FirebaseApp = {
 	isSignedIn: () => FirebaseApp.getUser() !== null,
 	signOut: async () => await auth.signOut(),
 	getServiceStatus: async () => (await firestore.collection("info").doc("public").get()).data(),
+	sendPasswordEmail: async () => {
+		auth.sendPasswordResetEmail(auth.currentUser?.email || "").catch(console.error)
+	},
 	emailErrorCodes: [
 		"auth/email-already-in-use",
 		"auth/invalid-email"

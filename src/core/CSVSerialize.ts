@@ -16,14 +16,15 @@ const DataItemToArray = (item: DataItem, columns: string[]): string[] => {
 }
 
 export const SaveFile = (name: string, fileContents: string) => {
+	const fileName = name.endsWith(".csv") ? name : name + ".csv"
 	var blob = new Blob([fileContents], { type: 'text/csv' });
 	if (typeof window.navigator.msSaveOrOpenBlob === "function") {
-		window.navigator.msSaveBlob(blob, name);
+		window.navigator.msSaveBlob(blob, fileName);
 	}
 	else {
 		var elem = window.document.createElement('a');
 		elem.href = window.URL.createObjectURL(blob);
-		elem.download = name;
+		elem.download = fileName;
 		document.body.appendChild(elem);
 		elem.click();
 		document.body.removeChild(elem);
@@ -34,8 +35,10 @@ export const Deserialize = (name: string, fileContents: string): DataSet => {
 	const parsed = PapaParse.parse(fileContents.trim())
 	const count = parsed.data.length
 
+	const fileName = (name.endsWith(".csv") && name !== ".csv") ? name.substring(0, name.length - 1 - ".csv".length) : name
+
 	let result: DataSet = {
-		name,
+		name: fileName,
 		items: [],
 		columns: [],
 		lastModified: Date.now()

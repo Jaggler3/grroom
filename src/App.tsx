@@ -15,6 +15,8 @@ import Net from './net/Net';
 import Loader from 'react-loader-spinner';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 
 function CleanProject() {
 	const { projectID } = useParams<{ projectID?: string }>()
@@ -79,6 +81,8 @@ function App() {
 					<Route exact path="/signup" component={SignUp} />
 					<Route exact path="/signin" component={SignIn} />
 					<Route exact path="/account" component={Account} /> {/* Billing, Plan */}
+					<Route path="/terms" component={Terms} />
+					<Route path="/privacy" component={Privacy} />
 					<Route path="/" component={({ match }: { match: any }) => <Root match={match} hasSession={hasSession} setHasSession={(v) => setHasSession(v)} />} />
 				</Switch>
 			</Elements>

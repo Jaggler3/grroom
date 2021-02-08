@@ -2,16 +2,21 @@ import { HelpModifier } from "../core/Modifier"
 import { DataSet } from "../core/DataSet"
 import CapitalizeModifier from "./suggestions/CapitalizeModifier";
 import TrimModifier from "./suggestions/TrimModifier";
+import PhoneFormatModifier from "./suggestions/PhoneFormatModifier";
 
 const AllHelpModifiers = [
 	CapitalizeModifier,
-	TrimModifier
+	TrimModifier,
 ]
 
-export default function Suggest(oldSuggestions: HelpModifier[], data: DataSet) {
+const PremiumModifiers = [
+	PhoneFormatModifier
+]
+
+export default function Suggest(premium: boolean, oldSuggestions: HelpModifier[], data: DataSet) {
 	let suggestions: HelpModifier[] = [];
 
-	for(const modifier of AllHelpModifiers) {
+	for(const modifier of [...PremiumModifiers, ...AllHelpModifiers]) {
 		const result = modifier({
 			lastModified: data.lastModified,
 			items: [...data.items],

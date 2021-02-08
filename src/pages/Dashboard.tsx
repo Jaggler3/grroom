@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import './Dashboard.scss'
 import { Switch, Route, useHistory } from 'react-router-dom'
 import ProjectsPage from './dashboard-nav/ProjectsPage'
 import SettingsPage from './dashboard-nav/SettingsPage'
+import { FirebaseApp } from '../services/firebase'
+import Cookies from '../content/Cookies'
 
 interface SidebarItemData {
 	name: string,
 	icon: string,
+	path?: string,
+	subpaths?: string[],
 	action: (props?: any) => boolean
 }
 
@@ -39,13 +43,17 @@ export default function Dashboard({ match }: { match: any }) {
 
 	const [activeItem, setActiveItem] = useState<string>("Projects")
 
-	const logout = () => { }
-
+	const logout = async () => {
+		await FirebaseApp.signOut()
+		Cookies.setSessionID(null)
+		window.location.assign("/")
+	}
 
 	const sidebarItems: SidebarItemData[] = [
 		{
 			name: "Projects",
 			icon: "far fa-sticky-note",
+			path: "/",
 			action: () => {
 				history.push("/")
 				return true
@@ -54,6 +62,11 @@ export default function Dashboard({ match }: { match: any }) {
 		{
 			name: "Settings",
 			icon: "fas fa-cog",
+			path: "/settings",
+			subpaths: [
+				"/settings/plan",
+				"/settings/card"
+			],
 			action: () => {
 				history.push("/settings")
 				return true
@@ -68,6 +81,21 @@ export default function Dashboard({ match }: { match: any }) {
 			}
 		},
 	]
+
+	useEffect(() => {
+		const item = sidebarItems.find((item) => (
+			item.path && (
+				window.location.pathname === item.path
+				|| (
+					item.subpaths
+					&& item.subpaths.indexOf(window.location.pathname) !== -1
+				)
+			)
+		))
+		if(item) {
+			setActiveItem(item.name)
+		}
+	}, [])
 
 	return (
 		<div id="dashboard">

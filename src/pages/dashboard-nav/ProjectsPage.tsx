@@ -11,16 +11,22 @@ export default function ProjectsPage() {
 
 	const history = useHistory()
 
-	const [data, setData] = useState(null)
+	const [loading, setLoading] = useState(true)
+	const [data, setData] = useState<Project[]>([])
+	const [projectCap, setProjectCap] = useState(0)
 	const [error, setError] = useState("")
 
 	useEffect(() => {
 		(async () => {
-			const projects = await Net.getProjects()
+			const response = await Net.getProjects()
+			const { projects, projectCap } = response
 			if (projects) {
-				setData(projects.filter((x: Project) => x !== null && x.projectID !== "!")) //remove array initializers
+				setData(() => projects.filter((x: Project) => x !== null && x.projectID !== "!")) //remove array initializers
+				setProjectCap(projectCap)
+				setLoading(false)
 			} else {
 				setError("Could not load project list.")
+				setLoading(false)
 			}
 		})()
 	}, [])
@@ -45,13 +51,27 @@ export default function ProjectsPage() {
 		alert("Your file is too large. Consider upgrading your account to upload larger files.")
 	}
 
+	const confirmDeleteProject = async (projectID: string) => {
+		const result = await Net.deleteProject(projectID)
+		if(!result) {
+			alert("Could not delete project.")
+		} else {
+			setData(data.filter((x: Project) => x.projectID !== projectID))
+		}
+	}
+
 	return (
 		<div className="dashboard-page">
 			<h1>Projects</h1>
 			{error === "" ? (
 				<div id="project-list">
-					{data ? (
-						<ProjectList data={data} submitNewProject={submitNewProject} />
+					{!loading ? (
+						<ProjectList {...{
+							data,
+							projectCap,
+							submitNewProject,
+							confirmDeleteProject: (projectID: string) => confirmDeleteProject(projectID)
+						}} />
 					) : (
 						<div id="loading-container">
 							<div id="loading-spinner">

@@ -5,7 +5,8 @@ export const createModifierID = () => [...Array(6)].map(() => Math.floor(Math.ra
 export interface Modifier {
 	id: string,
 	name: string,
-	effect: string
+	effect: string,
+	premium?: boolean
 }
 
 export interface HelpModifier extends Modifier {

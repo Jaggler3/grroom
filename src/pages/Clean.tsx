@@ -17,14 +17,18 @@ import ModEditor from '../components/ModEditor'
 import { ExampleModText } from '../content/ExampleMod'
 import { LoadLocalMods, LocalEffect, RemoveModFromCookies, SaveMod } from '../core/ModifierUtils'
 import { Deserialize, SaveFile, Serialize } from '../core/CSVSerialize'
-import Net from '../net/Net'
+import Net, { InfoResponse } from '../net/Net'
+import { useHistory } from 'react-router-dom';
 
 const FIVE_MBS: number = 5 * 1024 * 1024
 
 export interface CleanProps {
-	projectID?: string
+	projectID?: string,
+	premium?: boolean
 }
-export default function Clean({ projectID }: CleanProps) {
+export default function Clean({ premium, projectID }: CleanProps) {
+
+	const history = useHistory()
 
 	const [dataSet, setDataSet] = useState<DataSet>(EmptyDataSet)
 	const [showOverlay, setShowOverlay] = useState(true) // no projectID: welcome screen, yes projectID: loading screen
@@ -35,9 +39,11 @@ export default function Clean({ projectID }: CleanProps) {
 	const [changesMade, setChangesMade] = useState(false)
 	const [namedChanged, setNameChanged] = useState(false)
 	const [loading, setLoading] = useState(!!projectID)
+	const [userInfo, setUserInfo] = useState<InfoResponse | null>(null)
 
 	useEffect(() => {
 		(async () => {
+			setUserInfo(await Net.getUserInfo())
 			if (projectID) {
 				const projectContents = await Net.readProject(projectID)
 				if (projectContents) {
@@ -184,7 +190,8 @@ export default function Clean({ projectID }: CleanProps) {
 		await Net.saveProject(projectID!, Serialize(dataSet), namedChanged, dataSet.name)
 		setShowOverlay(wasShowing)
 		setOverlayPurpose(oldPurpose)
-		console.log("?")
+		setNameChanged(false)
+		setChangesMade(false)
 	}
 
 	const closeDisallowed = (originState: string) => {
@@ -199,9 +206,20 @@ export default function Clean({ projectID }: CleanProps) {
 		setNameChanged(true)
 	}
 
+	const backToDashboardButton = () => {
+		if (changesMade) {
+			setOverlayPurpose("confirm discard to dashboard")
+			setShowOverlay(true)
+		} else {
+			backToDashboard()
+		}
+	}
+
+	const backToDashboard = () => history.push("/")
+
 	return (
 		<div id="main">
-			<Header signedIn={!!projectID} onImport={reopenUpload} />
+			<Header signedIn={!!projectID} onImport={reopenUpload} onBack={backToDashboardButton}/>
 			<div id="top">
 				<div id="name">
 					<input
@@ -226,6 +244,7 @@ export default function Clean({ projectID }: CleanProps) {
 			<div id="center">
 				<CleanerTable dataSet={dataSet} />
 				<Mods
+					premium={!!userInfo && userInfo.plan !== "Lite"}
 					dataSet={dataSet}
 					applyMod={applyMod}
 					previewMod={openModPreview}
@@ -294,6 +313,19 @@ export default function Clean({ projectID }: CleanProps) {
 										<p>Cancel</p>
 									</button>
 									<button onClick={() => selectUpload("none")}>
+										<p>Continue</p>
+									</button>
+								</div>
+							</div>
+						)}
+						{overlayPurpose === "confirm discard to dashboard" && (
+							<div id="confirm">
+								<p>You have unsaved changes. Are you sure you would like go back to the dashboard?</p>
+								<div className="buttons">
+									<button className="cancel" onClick={closeOverlay}>
+										<p>Cancel</p>
+									</button>
+									<button onClick={() => backToDashboard()}>
 										<p>Continue</p>
 									</button>
 								</div>

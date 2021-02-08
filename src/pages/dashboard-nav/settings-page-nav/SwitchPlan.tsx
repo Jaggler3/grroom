@@ -8,6 +8,7 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 import Loader from 'react-loader-spinner'
 import { useHistory } from 'react-router-dom'
 import { StripeCardElementChangeEvent } from '@stripe/stripe-js'
+import Net from '../../../net/Net'
 
 export default function SwitchPlan() {
 
@@ -19,32 +20,64 @@ export default function SwitchPlan() {
 	const [cardErr, setCardErr] = useState("")
 	const [cardComplete, setCardComplete] = useState(false)
 
+	const [ignoredFirst, setIgnoredFirst] = useState(false)
+
 	const history = useHistory()
 
 	const onCardChange = (e: StripeCardElementChangeEvent) => {
+		if(!ignoredFirst) {
+			setIgnoredFirst(true)
+			return
+		}
 		if(!e.complete) {
 			setCardErr("Invalid card information.")
 			setCardComplete(false)
 		} else {
-			setCardComplete(false)
+			setCardComplete(true)
+			setCardErr("")
 		}
 	}
 
 	const confirmPlanSwitch = async () => {
 		if(initialPlan === "Lite") {
-			// send plan switch with new payment information from stripe
+			if (!stripe || !stripeElements) {
+				console.error("stripe not loaded")
+				return // still loading stripe
+			}
+
+			const cardElement = stripeElements.getElement(CardElement);
+
+			if (!cardElement) {
+				console.error("card element not loaded")
+			}
+
+			const { error, paymentMethod } = await stripe.createPaymentMethod({
+				type: 'card',
+				card: cardElement!,
+			});
+
+			if (error) {
+				console.error(error);
+				setCardErr("Invalid card information.")
+			} else {
+				await Net.switchPlan(selectedPlan, paymentMethod?.id)
+			}
 		} else {
 			// send plan switch
+			await Net.switchPlan(selectedPlan, "")
 		}
 		// await whatever
 		history.goBack()
 	}
 
 	useEffect(() => {
-		setTimeout(() => {
-			setInitialPlan("Pro")
-			setSelectedPlan("Pro")
-		}, 500)
+		(async () => {
+			const userInfo = await Net.getUserInfo()
+			if(userInfo) {
+				setInitialPlan(userInfo.plan)
+				setSelectedPlan(userInfo.plan)
+			}
+		})()
 	}, [])
 
 	if(selectedPlan === "") return (
@@ -98,11 +131,15 @@ export default function SwitchPlan() {
 				</>
 			)}
 			<br />
-			{selectedPlan !== initialPlan && cardComplete && (
+			{selectedPlan !== initialPlan && (initialPlan === "Lite" ? cardComplete : true) && (
 				<>
 					<button id="confirm" onClick={confirmPlanSwitch}>
 						<p>Confirm</p>
 					</button>
+					<br />
+					{selectedPlan !== "Lite" && (
+						<p>By confirming your subscription, you allow Grroom to charge your card for this payment and future payments concerning the selected subscription details.</p>
+					)}
 					<br />
 				</>
 			)}

@@ -4,7 +4,8 @@ import SwitchPlan from './settings-page-nav/SwitchPlan'
 import Loader from 'react-loader-spinner'
 import { PlanDataByName } from '../../content/Plans'
 import UpdateCard from './settings-page-nav/UpdateCard'
-import ChangePassword from './settings-page-nav/ChangePassword'
+import Net from '../../net/Net'
+import { FirebaseApp } from '../../services/firebase'
 
 export default function SettingsPage() {
 	return (
@@ -12,7 +13,6 @@ export default function SettingsPage() {
 			<Switch>
 				<Route path="/settings/plan" component={SwitchPlan} />
 				<Route path="/settings/card" component={UpdateCard} />
-				<Route path="/settings/password" component={ChangePassword} />
 				<Route path="/settings" component={SettingsMainPage} />
 			</Switch>
 		</div>
@@ -24,10 +24,18 @@ function SettingsMainPage() {
 	const [initialPlan, setInitialPlan] = useState("")
 
 	useEffect(() => {
-		setTimeout(() => {
-			setInitialPlan("Pro")
-		}, 500)
+		(async () => {
+			const userInfo = await Net.getUserInfo()
+			if(userInfo) {
+				setInitialPlan(userInfo.plan)
+			}
+		})()
 	}, [])
+
+	const sendPasswordEmail = () => {
+		FirebaseApp.sendPasswordEmail()
+		alert("An email was sent to your email address with instructions to change your password.")
+	}
 
 	if (initialPlan === "") return (
 		<div>
@@ -79,9 +87,7 @@ function SettingsMainPage() {
 			<br />
 			<h2>Authentication</h2>
 			<br />
-			<Link to="/settings/password">
-				<button><p>Change your password</p></button>
-			</Link>
+			<button onClick={sendPasswordEmail}><p>Change your password</p></button>
 		</div>
 	)
 }
