@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import './Dashboard.scss'
+import { History } from "history"
 import { Switch, Route, useHistory } from 'react-router-dom'
 import ProjectsPage from './dashboard-nav/ProjectsPage'
 import SettingsPage from './dashboard-nav/SettingsPage'
@@ -12,7 +13,7 @@ interface SidebarItemData {
 	icon: string,
 	path?: string,
 	subpaths?: string[],
-	action: (props?: any) => boolean
+	action: (history: History) => boolean
 }
 
 interface SidebarItemProps {
@@ -22,65 +23,61 @@ interface SidebarItemProps {
 }
 
 const SidebarItem = ({ data: { name, icon, action }, active, onClick }: SidebarItemProps) => {
+
+	const history = useHistory()
+
+	const onSidebarButtonClicked = () => action(history) && onClick()
+	
 	return (
-		<div
-			className={"sidebar-item" + (active ? " active" : "")}
-			onClick={() => {
-				if(action()) {
-					onClick();
-				}
-			}}
-		>
+		<div className={"sidebar-item" + (active ? " active" : "")} onClick={onSidebarButtonClicked}>
 			<i className={icon}></i>
 			<p>{name}</p>
 		</div>
 	)
 }
 
+const sidebarItems: SidebarItemData[] = [
+	{
+		name: "Projects",
+		icon: "far fa-sticky-note",
+		path: "/",
+		action: (history) => {
+			history.push("/")
+			return true
+		}
+	},
+	{
+		name: "Settings",
+		icon: "fas fa-cog",
+		path: "/settings",
+		subpaths: [
+			"/settings/plan",
+			"/settings/card"
+		],
+		action: (history) => {
+			history.push("/settings")
+			return true
+		}
+	},
+	{
+		name: "Logout",
+		icon: "fas fa-door-open",
+		action: () => {
+			logout()
+			return false
+		}
+	},
+]
+
+const logout = async () => {
+	await FirebaseApp.signOut()
+	Cookies.setSessionID(null)
+	window.location.assign("/")
+}
+
 export default function Dashboard({ match }: { match: any }) {
 
-	const history = useHistory()
-
 	const [activeItem, setActiveItem] = useState<string>("Projects")
-
-	const logout = async () => {
-		await FirebaseApp.signOut()
-		Cookies.setSessionID(null)
-		window.location.assign("/")
-	}
-
-	const sidebarItems: SidebarItemData[] = [
-		{
-			name: "Projects",
-			icon: "far fa-sticky-note",
-			path: "/",
-			action: () => {
-				history.push("/")
-				return true
-			}
-		},
-		{
-			name: "Settings",
-			icon: "fas fa-cog",
-			path: "/settings",
-			subpaths: [
-				"/settings/plan",
-				"/settings/card"
-			],
-			action: () => {
-				history.push("/settings")
-				return true
-			}
-		},
-		{
-			name: "Logout",
-			icon: "fas fa-door-open",
-			action: () => {
-				logout()
-				return false
-			}
-		},
-	]
 
 	useEffect(() => {
 		const item = sidebarItems.find((item) => (
@@ -104,6 +101,7 @@ export default function Dashboard({ match }: { match: any }) {
 				{sidebarItems.map((item) => (
 					<SidebarItem
 						data={item}
+						key={item.name}
 						active={activeItem === item.name}
 						onClick={() => setActiveItem(item.name)}
 					/>

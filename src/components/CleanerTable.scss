@@ -1,51 +1,42 @@
-#table-container {
+#main-table-container {
 	flex: 1;
 	position: relative;
-	overflow: scroll;
+}
 
-	/* override library style */
-	.TableScrollbar {
-		position: initial !important;
+// override default variables for BaseTable
+$table-prefix: AdvanceTable;
+
+$table-font-size: 15px;
+$table-padding-left: 15px;
+$table-padding-right: 15px;
+$column-padding: 7.5px;
+$show-frozen-rows-shadow: false;
+$show-frozen-columns-shadow: true;
+
+@import '~react-base-table/es/_BaseTable.scss';
+
+.AdvanceTable {
+	font-family: 'Manrope', sans-serif;
+
+	.highlight {
+		background-color: yellow !important;
 	}
-	.table-fixed-head {
-		top: 0 !important;
-		left: 0 !important;
+	.delete {
+		background-color: red !important;
+		color: white !important;
 	}
+}
 
-	table {
-		border-spacing: 0;
-		border-collapse: separate;
-		min-width: 100%;
-		background-color: #FDFDFD;
-	}
+.AdvanceTable__row:hover, .AdvanceTable__row--hovered {
+	background-color: white;
+}
 
-	th, td {
-		padding: 1em 1em;
-		box-sizing: border-box;
-		margin: 0;
-		white-space: pre;
-	}
+.AdvanceTable__row:hover {
+	background-color: #f3f3f3;
+}
 
-	thead > tr > th {
-		background-color: white;
-		position: sticky;
-		top: 0;
-		font-weight: bold;
-		text-align: left;
-		z-index: 2;
-	}
-
-	.item-number {
-		width: 1em;
-		text-align: center;
-		border: none;
-
-		user-select: none;
-		width: fit-content;
-
-		> p {
-			font-size: .75em;
-			opacity: .5;
-		}
+.AdvanceTable__row-cell {
+	&:hover {
+		background-color: #e3e3e3 !important;
 	}
 }

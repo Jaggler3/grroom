@@ -20,9 +20,7 @@ import Privacy from './pages/Privacy';
 
 function CleanProject() {
 	const { projectID } = useParams<{ projectID?: string }>()
-
 	if (!projectID || projectID.length === 0) return <Redirect to={"/"} />
-
 	return <Clean projectID={projectID} />
 }
 

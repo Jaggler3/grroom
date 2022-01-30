@@ -2,7 +2,6 @@ import React, { useState, useEffect, ChangeEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Loader from 'react-loader-spinner'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
-import { transform } from "@babel/standalone";
 
 import './Clean.scss'
 import Header from '../components/Header'
@@ -19,6 +18,7 @@ import { LoadLocalMods, LocalEffect, RemoveModFromCookies, SaveMod } from '../co
 import { Deserialize, SaveFile, Serialize } from '../core/CSVSerialize'
 import Net, { InfoResponse } from '../net/Net'
 import { useHistory } from 'react-router-dom';
+import CleanMenu from '../components/CleanMenu';
 
 const FIVE_MBS: number = 5 * 1024 * 1024
 
@@ -43,6 +43,10 @@ export default function Clean({ premium, projectID }: CleanProps) {
 
 	useEffect(() => {
 		(async () => {
+			if(!await Net.verifySession()) {
+				window.location.replace("/")
+				return
+			}
 			setUserInfo(await Net.getUserInfo())
 			if (projectID) {
 				const projectContents = await Net.readProject(projectID)
@@ -55,7 +59,7 @@ export default function Clean({ premium, projectID }: CleanProps) {
 
 	useEffect(() => {
 		(async () => {
-			if (loading && dataSet.items.length > 0) {
+			if (userInfo && loading && dataSet.items.length > 0) {
 				const info = await Net.getProjectInfo(projectID!)
 				if (info.name) {
 					setDataSet({
@@ -68,7 +72,7 @@ export default function Clean({ premium, projectID }: CleanProps) {
 				}
 			}
 		})()
-	}, [dataSet.items.length])
+	}, [!!userInfo, userInfo?.plan, userInfo?.pmID, userInfo?.status, dataSet.items.length])
 
 	const applyMod = (mod: Modifier, suggested: boolean) => {
 		if (suggested) {
@@ -219,8 +223,13 @@ export default function Clean({ premium, projectID }: CleanProps) {
 
 	return (
 		<div id="main">
-			<Header signedIn={!!projectID} onImport={reopenUpload} onBack={backToDashboardButton}/>
-			<div id="top">
+			<Header
+				projectID={projectID}
+				projectName={dataSet.name}
+				onImport={reopenUpload}
+				onBack={backToDashboardButton}
+			/>
+			{/* <div id="top">
 				<div id="name">
 					<input
 						placeholder="Your data set name..."
@@ -229,20 +238,12 @@ export default function Clean({ premium, projectID }: CleanProps) {
 						spellCheck={false}
 					/>
 				</div>
-				<div id="top-buttons">
-					{projectID && (
-						<button onClick={createSave}>
-							<p><i className="fas fa-save"></i>&nbsp; Save</p>
-						</button>
-					)}
-					&nbsp;
-					<button onClick={createExport}>
-						<p><i className="fas fa-download"></i>&nbsp; Export</p>
-					</button>
-				</div>
-			</div>
+			</div> */}
 			<div id="center">
-				<CleanerTable dataSet={dataSet} />
+				<div id="table-wrapper">
+					<CleanMenu canSave={!!projectID} {...{createSave, createExport}} />
+					<CleanerTable dataSet={dataSet} />
+				</div>
 				<Mods
 					premium={!!userInfo && userInfo.plan !== "Lite"}
 					dataSet={dataSet}

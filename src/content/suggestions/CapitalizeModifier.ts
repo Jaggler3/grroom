@@ -25,7 +25,7 @@ const CapitalizeModifier: ModifierGenerator = (data: DataSet) => {
 	let usedColumns: string[] = []
 
 	for(const column of data.columns) {
-		for(const item of data.items) {
+		for(const item of data.items.slice(0, 100)) {
 			const piece: string = item[column].trim()
 			if(piece.length > 0) {
 				const start: string = piece.charAt(0)

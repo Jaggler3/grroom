@@ -1,3 +1,15 @@
 #table-container { overflow: scroll }
+
 .diff { background-color: #f5ff6f }
 .diff-column { font-weight: bold }
+
+#diff-jump {
+	margin: 1em;
+	text-decoration: underline;
+	cursor: pointer;
+	user-select: none;
+}
+
+.diff-before-tooltip {
+	z-index: 10;
+}

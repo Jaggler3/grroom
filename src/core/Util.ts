@@ -15,3 +15,7 @@ export const streamToString = (stream: Stream): Promise<string> => {
 		stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')))
 	})
 }
+
+type ParamCollection = { [k: string]: string; }
+
+export function getParams() { return Object.fromEntries(new URLSearchParams(window.location.search).entries()) as ParamCollection }

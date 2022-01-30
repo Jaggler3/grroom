@@ -7,15 +7,17 @@ const checkColumnNeedsFormatting = (data: DataSet, column: string) => {
 	let count = 0
 
 	for(const item of data.items) {
-		const text = item[column].trim()
+		const text: string = item[column].trim()
 		if(text.length < 7) continue
-		let textCount = 0
+		let numCount = 0
 		for(let i = 0; i < text.length; i++) {
-			if(numbers.indexOf(text[i]) != -1) {
-				textCount++
+			if(numbers.indexOf(text[i]) !== -1) {
+				numCount++
 			}
 		}
-		if([7, 10, 11].indexOf(textCount) !== -1) count++
+		if([7, 10, 11].indexOf(numCount) !== -1 && !text.includes("/") && numCount < text.length) {
+			count++
+		}
 	}
 
 	return (count / data.items.length) >= 0.5
@@ -47,22 +49,17 @@ const PhoneFormatModifier: ModifierGenerator = (data: DataSet) => {
 	let usedColumns: string[] = []
 
 	for(const column of data.columns) {
-		for(const item of data.items) {
-			const piece: string = item[column]
-			if(piece.length > 0) {
-				const check = checkColumnNeedsFormatting(data, column)
-				if(!usedColumns.includes(column) && check) {
-					usedColumns.push(column)
-					modifiers.push({
-						id: createModifierID(),
-						name: `Format Phone Numbers in '${column}'`,
-						desc: "Remove unecessary characters from phone numbers. Whitespace will be trimmed.",
-						helpEffect: effect(column),
-						effect: "",
-						premium: true
-					})
-				}
-			}
+		const check = checkColumnNeedsFormatting(data, column)
+		if(!usedColumns.includes(column) && check) {
+			usedColumns.push(column)
+			modifiers.push({
+				id: createModifierID(),
+				name: `Format Phone Numbers in '${column}'`,
+				desc: "Remove unecessary characters from phone numbers. Whitespace will be trimmed.",
+				helpEffect: effect(column),
+				effect: "",
+				premium: true
+			})
 		}
 	}
 

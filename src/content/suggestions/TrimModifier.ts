@@ -19,6 +19,7 @@ const TrimModifier: ModifierGenerator = (data: DataSet) => {
 	}
 
 	let usedColumns: string[] = []
+	let i = 0
 
 	for(const column of data.columns) {
 		for(const item of data.items) {

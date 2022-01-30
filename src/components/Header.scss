@@ -1,32 +1,82 @@
 header {
-	width: 100vw;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	padding: .1em;
 	box-sizing: border-box;
 	margin-bottom: 1em;
+	padding: 0 2em;
+	height: 3.5em;
+	width: 100%;
 
 	> .space {
 		flex: 1
 	}
 
-	> #service-name {
+	 #service-name {
 		font-size: 2em;
 		font-weight: 800;
-		padding: 0.1em 1em;
+		padding: 0.1em .5em .3em;
 		font-family: 'Lobster', sans-serif;
 		user-select: none;
 	}
 
-	> #back {
+	> #header-left {
+		flex: 2;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	> #header-middle {
+		flex: 1;
+		text-align: center;
+	}
+	> #header-right {
+		flex: 2;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+	}
+
+	#breadcrumbs {
+		display: flex;
+		flex-direction: column;
+		padding: 0 1em;
+
+		> #breadcrumbs-top {
+			font-size: .8em;
+			font-weight: bold;
+			word-spacing: .2em;
+		}
+		> #breadcrumbs-bottom {
+			font-size: 1.5em;
+			line-height: 1em;
+
+			> i {
+				font-size: .6em;
+				width: 1em;
+				height: 1em;
+				color: gray;
+				padding-left: 0.5em;
+				opacity: 0.75;
+				cursor: pointer;
+				transition: .1s opacity;
+				&:hover {
+					opacity: 1;
+				}
+			}
+		}
+	}
+
+	#back, #help {
 		cursor: pointer;
-		padding: 1em;
+		width: 2em;
+		height: 2em;
 		display: flex;
 		align-items: center;
-
-		> i {
-			margin: 0 1em 0 1em
-		}
+		justify-content: center;
+		background-color: rgba(0, 0, 0, 0.1);
+		color: #646464;
+		border-radius: 50%;
 	}
 }

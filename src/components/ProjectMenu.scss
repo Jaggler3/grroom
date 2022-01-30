@@ -1,0 +1,62 @@
+@import "../colors";
+
+#project-menu-wrapper {
+	width: 100%;
+
+	display: flex;
+	justify-content: center;
+
+	#project-menu {
+		width: fit-content;
+		display: flex;
+		justify-content: center;
+		height: 3em;
+		margin-bottom: 1em;
+		position: relative;
+		background-color: white;
+		border-radius: 1.5em;
+		box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+
+		#project-step-indicator {
+			position: absolute;
+			background-color: $button-color;
+			height: 2.5em;
+			width: 6.5em;
+			margin-left: 0.25em;
+			z-index: 0;
+			margin-top: .25em;
+			border-radius: 1.25em;
+			box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+			transition: .25s left, .25s background-color;
+		}
+
+		.project-menu-item {
+			z-index: 1;
+			width: 7em;
+			text-align: center;
+			line-height: 3em;
+			opacity: 0.5;
+			cursor: pointer;
+			transition: .25s opacity;
+			font-weight: bold;
+
+			> a {
+				text-decoration: none;
+				color: black;
+				transition: .25s color;
+			}
+
+			&:hover {
+				opacity: 1;
+			}
+
+			&.project-menu-item-selected {
+				opacity: 1;
+				> a {
+					text-decoration: none;
+					color: white;
+				}
+			}
+		}
+	}
+}

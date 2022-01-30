@@ -6,7 +6,8 @@
 	<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="theme-color" content="#000000" />
-	<meta name="description" content="Grroom data cleanup tool" />
+	<meta name="description" content="Grroom CSV data cleanup tool" />
+	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 	<base href="/" />
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -17,6 +18,11 @@
 	<script src="js-interpreter/acorn.js"></script>
 	<script src="js-interpreter/interpreter.js"></script>
 	<title>Grroom</title>
+	<style>
+		.rc-tooltip {
+			z-index: 3;
+		}
+	</style>
 </head>
 
 <body>

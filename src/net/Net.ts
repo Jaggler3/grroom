@@ -2,7 +2,7 @@ import Cookies from "../content/Cookies"
 import { FirebaseApp } from "../services/firebase"
 import { Project } from "../core/Project"
 
-const ServerLoc = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "http://grroom.eastus.cloudapp.azure.com:8080"
+const ServerLoc = process.env.NODE_ENV === "development" ? "http://localhost:8080" : "http://grroom.eastus.cloudapp.azure.com:8080"
 
 export const Get = (path: string) => fetch(ServerLoc + "/" + path)
 export const PostJson = (path: string, body: object) => fetch(ServerLoc + "/" + path, {
@@ -74,7 +74,15 @@ const Net = {
 		}
 		const request = await Get("session/verify?sessionID=" + oldSession)
 		const result = await request.json().catch(console.error)
-		return result && result.status === "success"
+		if(result) {
+			if(result.status === "success") {
+				if(result.sessionID !== oldSession) {
+					Cookies.setSessionID(result.sessionID)
+				}
+				return true
+			}
+		}
+		return false
 	},
 	getUserInfo: async (): Promise<InfoResponse | null> => {
 		const request = await Get("userinfo/info?sessionID=" + Cookies.getSessionID())

@@ -62,7 +62,7 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 				} else {
 					setValidated(true)
 				}
-			} catch (e) {
+			} catch (e: any) {
 				setValidationError(e.toString().split("\n").shift())
 			}
 		} else {

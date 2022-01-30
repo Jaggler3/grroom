@@ -49,7 +49,9 @@ export const TransformEffect = (code: string): string => {
 export const LocalEffect = (original: DataSet, mod: Modifier): DataSet => {
 	let beforeItems = original.items;
 
-	const code = TransformEffect(mod.effect.trim()).trim().replace("modify", "") + "(__rows, __cols)"
+	const code = TransformEffect(mod.effect.trim()).trim() + ";modify(__rows, __cols)"
+
+	console.log(code)
 
 	// @ts-ignore
 	if(Interpreter) {
@@ -61,6 +63,7 @@ export const LocalEffect = (original: DataSet, mod: Modifier): DataSet => {
 			parsed.setValueToScope("modify", parsed.createNativeFunction((set: any) => set))
 			parsed.setValueToScope("log", parsed.createNativeFunction(console.log))
 			parsed.run()
+			console.log({ parsed })
 			const newItems = parsed.pseudoToNative(parsed.value)
 
 			const result: DataSet = {

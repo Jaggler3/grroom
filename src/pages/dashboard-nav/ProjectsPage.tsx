@@ -62,7 +62,7 @@ export default function ProjectsPage() {
 
 	return (
 		<div className="dashboard-page">
-			<h1>Projects</h1>
+			<h1>My Projects</h1>
 			{error === "" ? (
 				<div id="project-list">
 					{!loading ? (

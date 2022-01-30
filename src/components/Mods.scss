@@ -26,6 +26,7 @@
 #mod-list {
 	max-height: calc(100vh - 15.25em);
 	overflow-y: scroll;
+	@include hide-scrollbar;
 }
 
 .help-modifier {
@@ -45,6 +46,7 @@
 		font-size: 0.5em;
 		padding-left: 0.5em;
 		font-weight: bold;
+		color: orangered;
 	}
 }
 
@@ -59,8 +61,10 @@
 	}
 
 	> button {
-		width: 2em;
+		width: 1.95em;
+		max-width: 2em;
 		height: 2em;
+		max-height: 2em;
 		padding: 0;
 		background-color: transparent;
 		border: 2px solid $button-color;

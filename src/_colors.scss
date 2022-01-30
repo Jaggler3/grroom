@@ -8,3 +8,11 @@ $button-color: #5697E3;
 		color: $button-color;
 	}
 }
+
+@mixin hide-scrollbar {
+	&::-webkit-scrollbar {
+		display: none;
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+}

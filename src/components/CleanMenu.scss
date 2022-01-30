@@ -1,0 +1,91 @@
+@import "../colors";
+@use "sass:rgba";
+
+#clean-menu {
+	display: flex;
+	border-top: 1px solid #eee;
+	border-left: 1px solid #eee;
+	border-right: 1px solid #eee;
+	background-color: #f8f8f8;
+	border-top-left-radius: 1em;
+	border-top-right-radius: 1em;
+	margin-left: -1px;
+	margin-right: -1px;
+	height: 3em;
+	align-items: center;
+	justify-content: center;
+	padding: 0 1em;
+
+	> #cm-search-wrapper {
+		background-color: white;
+		padding: 0.1em 0.2em 0.1em 0.5em;
+		display: flex;
+		align-items: center;
+		border: 1px solid #eee;
+		border-radius: .25em;
+		margin-right: 1em;
+		
+		outline-color: rgba($button-color, 0); 
+		outline-offset: 5px;
+		outline-style: auto;
+		outline-width: 0px;
+
+		transition: .1s outline-color, .1s outline-offset, .1s outline-width;
+
+		&:focus-within {
+			/* chrome default input outline style, with $button-color */
+			outline-color: $button-color;
+			outline-offset: 2px;
+			outline-style: auto;
+			outline-width: 5px;
+		}
+
+		> i {
+			font-size: 0.8em;
+			opacity: 0.5;
+			margin-left: 0.2em;
+			margin-right: 1em;
+			color: $button-color;
+		}
+		> #cm-search {
+			border: none;
+			outline: none;
+			background-color: transparent;
+			height: 2em;
+			font-size: 0.9em;
+
+			&::placeholder {
+				color: darkgray;
+			}
+		}
+	}
+
+	> button {
+		width: 2.6em;
+		margin-right: .5em;
+		border: 1px solid #eee;
+		border-radius: .25em;
+		height: 2.6em;
+		padding: 0;
+		display: grid;
+		place-items: center;
+		background-color: white;
+		color: $button-color;
+		display: flex;
+		justify-content: center;
+
+		&:disabled {
+			color: darkgray;
+		}
+
+		> i {
+			font-size: 1.3em;
+			opacity: 0.75;
+
+			&.small {
+				margin-top: 0.4em;
+				font-size: 0.8em;
+			}
+		}
+	}
+}
