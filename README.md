@@ -1,6 +1,7 @@
 ![Grroom Logo](logo.png)
 
 # Grroom
+
 Grroom is a data clean-up tool to prepare your data sets for analysis and usage.
 
 ## How to use Grroom
