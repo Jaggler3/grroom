@@ -8,13 +8,13 @@ import { FirebaseApp } from '../services/firebase';
 import Net from '../net/Net';
 import Cookies from '../content/Cookies';
 import DisplayError from '../components/DisplayError';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PlanList from '../components/PlanList';
 import CardInput from '../components/CardInput';
 
 export default function SignUp() {
 
-	const history = useHistory()
+	const navigate = useNavigate()
 
 	const [selectedPlan, setSelectedPlan] = useState("Lite")
 
@@ -96,7 +96,7 @@ export default function SignUp() {
 		// next steps
 		if (sessionID) {
 			Cookies.setSessionID(sessionID)
-			history.push("/")
+			navigate("/")
 		} else {
 			alert("An internal error occurred. [1234621]")
 			return

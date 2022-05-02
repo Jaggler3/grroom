@@ -2,7 +2,7 @@ import { Project } from "../core/Project"
 import React, { ChangeEvent, useState } from "react"
 import { DateTime } from "luxon"
 import { isMobile } from "react-device-detect"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 // import bytes from "bytes"
 
 interface ProjectListProps {
@@ -13,7 +13,7 @@ interface ProjectListProps {
 }
 export default function ProjectList({ data, projectCap, submitNewProject, confirmDeleteProject }: ProjectListProps) {
 
-	const history = useHistory()
+	const navigate = useNavigate()
 
 	const [deleting, setDeleting] = useState("")
 
@@ -25,7 +25,7 @@ export default function ProjectList({ data, projectCap, submitNewProject, confir
 		<div id="items">
 			<br />
 			<div id="new-project" {...(data?.length === projectCap) ? () => {
-				history.push("/settings")
+				navigate("/settings")
 			} : {}}>
 				{data?.length === projectCap ? (
 					<>

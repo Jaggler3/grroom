@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Switch, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link } from 'react-router-dom'
 import SwitchPlan from './settings-page-nav/SwitchPlan'
-import Loader from 'react-loader-spinner'
+import { Oval } from 'react-loader-spinner'
 import { PlanDataByName } from '../../content/Plans'
 import UpdateCard from './settings-page-nav/UpdateCard'
 import Net from '../../net/Net'
@@ -10,11 +10,17 @@ import { FirebaseApp } from '../../services/firebase'
 export default function SettingsPage() {
 	return (
 		<div className="dashboard-page">
-			<Switch>
-				<Route path="/settings/plan" component={SwitchPlan} />
-				<Route path="/settings/card" component={UpdateCard} />
-				<Route path="/settings" component={SettingsMainPage} />
-			</Switch>
+			<Routes>
+				<Route path="/settings/plan">
+					<SwitchPlan />
+				</Route>
+				<Route path="/settings/card">
+					<UpdateCard />
+				</Route>
+				<Route path="/settings">
+					<SettingsMainPage />
+				</Route>
+			</Routes>
 		</div>
 	)
 }
@@ -42,8 +48,7 @@ function SettingsMainPage() {
 			<h1>Settings</h1>
 			<div id="loading-container">
 				<div id="loading-spinner">
-					<Loader
-						type="Oval"
+					<Oval
 						color="#5697E3"
 						height={100}
 						width={100}

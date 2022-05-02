@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import './Dashboard.scss'
-import { History } from "history"
-import { Switch, Route, useHistory } from 'react-router-dom'
+import { Routes, Route, useNavigate, NavigateFunction } from 'react-router-dom'
 import ProjectsPage from './dashboard-nav/ProjectsPage'
 import SettingsPage from './dashboard-nav/SettingsPage'
 import { FirebaseApp } from '../services/firebase'
@@ -13,7 +12,7 @@ interface SidebarItemData {
 	icon: string,
 	path?: string,
 	subpaths?: string[],
-	action: (history: History) => boolean
+	action: (navigate: NavigateFunction) => boolean
 }
 
 interface SidebarItemProps {
@@ -24,9 +23,9 @@ interface SidebarItemProps {
 
 const SidebarItem = ({ data: { name, icon, action }, active, onClick }: SidebarItemProps) => {
 
-	const history = useHistory()
+	const navigate = useNavigate()
 
-	const onSidebarButtonClicked = () => action(history) && onClick()
+	const onSidebarButtonClicked = () => action(navigate) && onClick()
 	
 	return (
 		<div className={"sidebar-item" + (active ? " active" : "")} onClick={onSidebarButtonClicked}>
@@ -41,8 +40,8 @@ const sidebarItems: SidebarItemData[] = [
 		name: "Projects",
 		icon: "far fa-sticky-note",
 		path: "/",
-		action: (history) => {
-			history.push("/")
+		action: (navigate) => {
+			navigate("/")
 			return true
 		}
 	},
@@ -54,8 +53,8 @@ const sidebarItems: SidebarItemData[] = [
 			"/settings/plan",
 			"/settings/card"
 		],
-		action: (history) => {
-			history.push("/settings")
+		action: (navigate) => {
+			navigate("/settings")
 			return true
 		}
 	},
@@ -75,7 +74,7 @@ const logout = async () => {
 	window.location.assign("/")
 }
 
-export default function Dashboard({ match }: { match: any }) {
+export default function Dashboard() {
 
 	const [activeItem, setActiveItem] = useState<string>("Projects")
 
@@ -108,10 +107,14 @@ export default function Dashboard({ match }: { match: any }) {
 				))}
 			</div>
 			<div id="content">
-				<Switch>
-					<Route path="/settings" component={SettingsPage} />
-					<Route path="/" component={ProjectsPage} />
-				</Switch>
+				<Routes>
+					<Route path="/settings">
+						<SettingsPage />
+					</Route>
+					<Route path="/">
+						<ProjectsPage />
+					</Route>
+				</Routes>
 			</div>
 		</div>
 	)

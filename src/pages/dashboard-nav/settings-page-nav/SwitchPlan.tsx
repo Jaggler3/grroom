@@ -5,8 +5,8 @@ import PlanList from '../../../components/PlanList'
 import './SwitchPlan.scss'
 import DisplayError from '../../../components/DisplayError'
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
-import Loader from 'react-loader-spinner'
-import { useHistory } from 'react-router-dom'
+import { Oval } from 'react-loader-spinner'
+import { useNavigate } from 'react-router-dom'
 import { StripeCardElementChangeEvent } from '@stripe/stripe-js'
 import Net from '../../../net/Net'
 
@@ -22,7 +22,7 @@ export default function SwitchPlan() {
 
 	const [ignoredFirst, setIgnoredFirst] = useState(false)
 
-	const history = useHistory()
+	const navigate = useNavigate()
 
 	const onCardChange = (e: StripeCardElementChangeEvent) => {
 		if(!ignoredFirst) {
@@ -67,7 +67,7 @@ export default function SwitchPlan() {
 			await Net.switchPlan(selectedPlan, "")
 		}
 		// await whatever
-		history.goBack()
+		navigate(-1)
 	}
 
 	useEffect(() => {
@@ -85,8 +85,7 @@ export default function SwitchPlan() {
 			<BackHeader />
 			<div id="loading-container">
 				<div id="loading-spinner">
-					<Loader
-						type="Oval"
+					<Oval
 						color="#5697E3"
 						height={100}
 						width={100}

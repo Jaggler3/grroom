@@ -18,7 +18,9 @@ const DataItemToArray = (item: DataItem, columns: string[]): string[] => {
 export const SaveFile = (name: string, fileContents: string) => {
 	const fileName = name.endsWith(".csv") ? name : name + ".csv"
 	var blob = new Blob([fileContents], { type: 'text/csv' });
+	// @ts-ignore
 	if (typeof window.navigator.msSaveOrOpenBlob === "function") {
+		// @ts-ignore
 		window.navigator.msSaveBlob(blob, fileName);
 	}
 	else {

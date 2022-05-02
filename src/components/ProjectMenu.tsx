@@ -1,5 +1,5 @@
-import React from "react"
-import { Link, useHistory } from "react-router-dom"
+import React, { useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { getParams } from "../core/Util"
 import "./ProjectMenu.scss"
 
@@ -14,13 +14,7 @@ export default function ProjectMenu({ projectID }: ProjectMenuProps) {
 	const { step: currentStep } = getParams()
 	const stepIndex = steps.indexOf(currentStep)
 
-	const history = useHistory()
-
 	const getStepName = (step: string | undefined) => !step  ? "Wrangle" : (step.substring(0, 1).toUpperCase() + step.substring(1))
-
-	if(window.location.pathname.endsWith("/")) {
-		history.replace(window.location.pathname.slice(0, -1))
-	}
 
 	return (
 		<div id="project-menu-wrapper">

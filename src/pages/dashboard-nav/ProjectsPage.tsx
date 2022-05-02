@@ -1,15 +1,15 @@
 import React, { useState, useEffect, ChangeEvent } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Net from '../../net/Net'
 import { Project } from '../../core/Project'
 import ProjectList from '../../components/ProjectList'
 
 import './ProjectsPage.scss'
-import Loader from 'react-loader-spinner'
+import { Oval } from 'react-loader-spinner'
 
 export default function ProjectsPage() {
 
-	const history = useHistory()
+	const navigate = useNavigate()
 
 	const [loading, setLoading] = useState(true)
 	const [data, setData] = useState<Project[]>([])
@@ -42,7 +42,7 @@ export default function ProjectsPage() {
 
 			const projectID = await Net.createProject(file, fileTooLarge)
 			if (projectID) {
-				history.push("/project/" + projectID)
+				navigate("/project/" + projectID)
 			}
 		}
 	}
@@ -75,8 +75,7 @@ export default function ProjectsPage() {
 					) : (
 						<div id="loading-container">
 							<div id="loading-spinner">
-								<Loader
-									type="Oval"
+								<Oval
 									color="#5697E3"
 									height={100}
 									width={100}

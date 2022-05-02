@@ -1,8 +1,8 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export default function BackHeader() {
-	const history = useHistory()
+	const navigate = useNavigate()
 	return (
 		<div style={{
 			display: "flex",
@@ -11,7 +11,7 @@ export default function BackHeader() {
 			marginBottom: "1em",
 			width: "fit-content",
 			cursor: "pointer"
-		}} onClick={() => history.goBack()}>
+		}} onClick={() => navigate(-1)}>
 			<i className="fas fa-arrow-left" style={{
 				marginRight: "1em",
 				fontSize: "1.25em"

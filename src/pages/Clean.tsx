@@ -1,7 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import Loader from 'react-loader-spinner'
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+import { Oval } from 'react-loader-spinner'
 
 import './Clean.scss'
 import Header from '../components/Header'
@@ -17,8 +16,9 @@ import { ExampleModText } from '../content/ExampleMod'
 import { LoadLocalMods, LocalEffect, RemoveModFromCookies, SaveMod } from '../core/ModifierUtils'
 import { Deserialize, SaveFile, Serialize } from '../core/CSVSerialize'
 import Net, { InfoResponse } from '../net/Net'
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CleanMenu from '../components/CleanMenu';
+import { FirebaseApp } from '../services/firebase'
 
 const FIVE_MBS: number = 5 * 1024 * 1024
 
@@ -28,7 +28,7 @@ export interface CleanProps {
 }
 export default function Clean({ premium, projectID }: CleanProps) {
 
-	const history = useHistory()
+	const navigate = useNavigate()
 
 	const [dataSet, setDataSet] = useState<DataSet>(EmptyDataSet)
 	const [showOverlay, setShowOverlay] = useState(true) // no projectID: welcome screen, yes projectID: loading screen
@@ -43,6 +43,9 @@ export default function Clean({ premium, projectID }: CleanProps) {
 
 	useEffect(() => {
 		(async () => {
+			if(!FirebaseApp.isSignedIn()) {
+				return
+			}
 			if(!await Net.verifySession()) {
 				window.location.replace("/")
 				return
@@ -219,7 +222,7 @@ export default function Clean({ premium, projectID }: CleanProps) {
 		}
 	}
 
-	const backToDashboard = () => history.push("/")
+	const backToDashboard = () => navigate("/")
 
 	return (
 		<div id="main">
@@ -298,8 +301,7 @@ export default function Clean({ premium, projectID }: CleanProps) {
 						)}
 						{overlayPurpose === "loading" && (
 							<div id="loading-spinner">
-								<Loader
-									type="Oval"
+								<Oval
 									color="#5697E3"
 									height={100}
 									width={100}

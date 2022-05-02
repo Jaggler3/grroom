@@ -1,5 +1,5 @@
 import { DataSet } from '../core/DataSet'
-import React, { createRef, useEffect, useReducer, useRef, useState } from 'react'
+import React, { createRef, useEffect } from 'react'
 
 import BaseTable, { AutoResizer, Column, ColumnShape } from 'react-base-table'
 import 'react-base-table/styles.css'

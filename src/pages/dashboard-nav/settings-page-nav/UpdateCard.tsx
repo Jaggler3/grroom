@@ -3,7 +3,7 @@ import BackHeader from '../BackHeader'
 
 import DisplayError from '../../../components/DisplayError'
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { StripeCardElementChangeEvent } from '@stripe/stripe-js'
 import Net from '../../../net/Net'
 
@@ -15,7 +15,7 @@ export default function UpdateCard() {
 	const [cardErr, setCardErr] = useState("")
 	const [cardComplete, setCardComplete] = useState(false)
 
-	const history = useHistory()
+	const navigate = useNavigate()
 
 	const onCardChange = (e: StripeCardElementChangeEvent) => {
 		setCardComplete(e.complete)
@@ -43,7 +43,7 @@ export default function UpdateCard() {
 			setCardErr("Invalid card information.")
 		} else {
 			await Net.updateCard(paymentMethod.id)
-			history.goBack()
+			navigate(-1)
 		}
 	}
 

@@ -1,5 +1,5 @@
 import React from "react"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { FirebaseApp } from "../services/firebase"
 import Cookies from "../content/Cookies"
 
@@ -11,11 +11,9 @@ interface AuthButtonProps {
 
 export const AuthButton = ({ signedIn  }: AuthButtonProps) => {
 
-	const history = useHistory()
+	const navigate = useNavigate()
 
-	const signIn = () => {
-		history.push("/signin")
-	}
+	const signIn = () => navigate("/signin")
 
 	const signOut = async () => {
 		await FirebaseApp.signOut()

@@ -50,9 +50,14 @@ export default function Header({ projectID, projectName, onImport, hideImport, o
 					</>
 				)}
 				{!projectID && (
-					<button onClick={onImport}>
-						<p>Import</p>
-					</button>
+					<>
+						<button onClick={onImport}>
+							<p>Import</p>
+						</button>
+						<div id="header-middle-float">
+							<p id="service-name">Grroom</p>
+						</div>
+					</>
 				)}
 			</header>
 			<ProjectMenu projectID={projectID} />

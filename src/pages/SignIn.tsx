@@ -6,11 +6,11 @@ import DisplayError from '../components/DisplayError'
 import { FirebaseApp } from '../services/firebase';
 import Net from '../net/Net';
 import Cookies from '../content/Cookies';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function SignIn() {
 
-	const history = useHistory()
+	const navigate = useNavigate()
 
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
@@ -70,7 +70,7 @@ export default function SignIn() {
 		// next steps
 		if (sessionID) {
 			Cookies.setSessionID(sessionID)
-			history.push("/")
+			navigate("/")
 		} else {
 			alert("An internal error occurred. [609820]")
 			return

@@ -5,14 +5,14 @@ import './services/firebase'
 
 import './App.scss';
 import Clean from './pages/Clean';
-import { BrowserRouter, Switch, Route, useParams, Redirect } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useParams, Navigate, useMatch } from 'react-router-dom';
 import SignUp from './pages/SignUp';
 import Account from './pages/Account';
 import { FirebaseApp } from './services/firebase';
 import Dashboard from './pages/Dashboard';
 import SignIn from './pages/SignIn';
 import Net from './net/Net';
-import Loader from 'react-loader-spinner';
+import { Oval } from 'react-loader-spinner';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import Terms from './pages/Terms';
@@ -20,11 +20,11 @@ import Privacy from './pages/Privacy';
 
 function CleanProject() {
 	const { projectID } = useParams<{ projectID?: string }>()
-	if (!projectID || projectID.length === 0) return <Redirect to={"/"} />
+	if (!projectID || projectID.length === 0) return <Navigate to={"/"} />
 	return <Clean projectID={projectID} />
 }
 
-function Root({ match, hasSession, setHasSession }: { match: any, hasSession: boolean, setHasSession: (v: boolean) => void }) {
+function Root({ hasSession, setHasSession }: { hasSession: boolean, setHasSession: (v: boolean) => void }) {
 	const [loaded, setLoaded] = useState(false)
 
 	useEffect(() => {
@@ -47,8 +47,7 @@ function Root({ match, hasSession, setHasSession }: { match: any, hasSession: bo
 	if (!loaded) return (
 		<div id="loading-container">
 			<div id="loading-spinner">
-				<Loader
-					type="Oval"
+				<Oval
 					color="#5697E3"
 					height={100}
 					width={100}
@@ -58,7 +57,7 @@ function Root({ match, hasSession, setHasSession }: { match: any, hasSession: bo
 	)
 
 	if (FirebaseApp.isSignedIn()) {
-		return <Dashboard match={match} />
+		return <Dashboard />
 	} else {
 		return <Clean />
 	}
@@ -73,16 +72,16 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Elements stripe={stripePromise}>
-				<Switch>
-					<Route path="/project/:projectID" component={CleanProject} />
-					<Route path="/project" render={() => <Redirect to={"/"} />} />
-					<Route exact path="/signup" component={SignUp} />
-					<Route exact path="/signin" component={SignIn} />
-					<Route exact path="/account" component={Account} /> {/* Billing, Plan */}
-					<Route path="/terms" component={Terms} />
-					<Route path="/privacy" component={Privacy} />
-					<Route path="/" component={({ match }: { match: any }) => <Root match={match} hasSession={hasSession} setHasSession={(v) => setHasSession(v)} />} />
-				</Switch>
+				<Routes>
+					{/* <Route path="/project/:projectID" element={<CleanProject />} />
+					<Route path="/project" element={<Navigate replace to={"/"} />} />
+					<Route path="/signup" element={<SignUp />} />
+					<Route path="/signin" element={<SignIn />} />
+					<Route path="/account" element={<Account />} />
+					<Route path="/terms" element={<Terms />} />
+					<Route path="/privacy" element={<Privacy />} /> */}
+					<Route path="/" element={<Root hasSession={hasSession} setHasSession={(v) => setHasSession(v)} />} />
+				</Routes>
 			</Elements>
 		</BrowserRouter>
 	);

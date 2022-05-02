@@ -30,6 +30,13 @@ header {
 		flex: 1;
 		text-align: center;
 	}
+	> #header-middle-float {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		text-align: center;
+	}
 	> #header-right {
 		flex: 2;
 		display: flex;
