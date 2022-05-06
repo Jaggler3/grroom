@@ -22,7 +22,7 @@ export default function ProjectMenu({ projectID }: ProjectMenuProps) {
 				<div id="project-step-indicator" style={{ left: stepIndex * 7 + "em", backgroundColor: colors[stepIndex] }}></div>
 				{steps.map((step, index) => (
 					<div key={index} className={`project-menu-item ${stepIndex === index ? "project-menu-item-selected" : ""}`}>
-						<Link to={(projectID ? `${projectID}` : "") + (step ? `?step=${step}` : "")}>
+						<Link to={(step ? `?step=${step}` : "")}>
 							<p>{getStepName(step)}</p>
 						</Link>
 					</div>

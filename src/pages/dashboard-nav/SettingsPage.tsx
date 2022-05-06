@@ -11,15 +11,9 @@ export default function SettingsPage() {
 	return (
 		<div className="dashboard-page">
 			<Routes>
-				<Route path="/settings/plan">
-					<SwitchPlan />
-				</Route>
-				<Route path="/settings/card">
-					<UpdateCard />
-				</Route>
-				<Route path="/settings">
-					<SettingsMainPage />
-				</Route>
+				<Route path="/plan" element={<SwitchPlan />} />
+				<Route path="/card" element={<UpdateCard />} />
+				<Route path="/" element={<SettingsMainPage />} />
 			</Routes>
 		</div>
 	)
@@ -50,6 +44,7 @@ function SettingsMainPage() {
 				<div id="loading-spinner">
 					<Oval
 						color="#5697E3"
+						secondaryColor='white'
 						height={100}
 						width={100}
 					/>

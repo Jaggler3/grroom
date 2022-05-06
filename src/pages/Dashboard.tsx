@@ -108,12 +108,8 @@ export default function Dashboard() {
 			</div>
 			<div id="content">
 				<Routes>
-					<Route path="/settings">
-						<SettingsPage />
-					</Route>
-					<Route path="/">
-						<ProjectsPage />
-					</Route>
+					<Route path="/settings/*" element={<SettingsPage />} />
+					<Route path="/" element={<ProjectsPage />} />
 				</Routes>
 			</div>
 		</div>

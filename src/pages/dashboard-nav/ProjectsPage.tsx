@@ -77,6 +77,7 @@ export default function ProjectsPage() {
 							<div id="loading-spinner">
 								<Oval
 									color="#5697E3"
+									secondaryColor='white'
 									height={100}
 									width={100}
 								/>

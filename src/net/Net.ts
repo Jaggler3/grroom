@@ -84,13 +84,13 @@ const Net = {
 		}
 		return false
 	},
-	getUserInfo: async (): Promise<InfoResponse | null> => {
+	getUserInfo: async (): Promise<InfoResponse | undefined> => {
 		const request = await Get("userinfo/info?sessionID=" + Cookies.getSessionID())
 		const result = await request.json().catch(console.error)
 		if(result && result.status === "success") {
 			return result as InfoResponse
 		}
-		return null
+		return undefined
 	},
 	switchPlan: async (plan: string, pmID?: string) => {
 		const request = await Get(`userinfo/switchPlan?sessionID=${Cookies.getSessionID()}&plan=${plan}&pmID=${pmID || ""}`)
@@ -139,26 +139,28 @@ const Net = {
 		if(!response) return null
 		return await response.text().catch(console.error)
 	},
-	saveProject: async (projectID: string, contents: string, shouldSaveName: boolean, name: string): Promise<boolean> => {
+	renameProject: async (projectID: string, name: string): Promise<boolean> => {
 		const sessionID = Cookies.getSessionID()
 		const encodedName = encodeURIComponent(name)
 
-		// update name
-		if (shouldSaveName) {
-			const request = await Get(`project/rename?sessionID=${sessionID}&projectID=${projectID}&newName=${encodedName}`)
-			const result = await request.json()
+		const request = await Get(`project/rename?sessionID=${sessionID}&projectID=${projectID}&newName=${encodedName}`)
+		const result = await request.json()
 
-			if (result.status !== "success") {
-				return false
-			}
+		if (result.status !== "success") {
+			return false
 		}
+
+		return true
+	},
+	saveProject: async (projectID: string, contents: string): Promise<boolean> => {
+		const sessionID = Cookies.getSessionID()
 
 		// update contents
 		let file = new File([ contents ], "tmp")
 		const formData = new FormData()
 		formData.set("csv-file", file)
 
-		const response = await PostForm(`project/save?sessionID=${sessionID}&projectID=${projectID}&name=${encodedName}`, formData )
+		const response = await PostForm(`project/save?sessionID=${sessionID}&projectID=${projectID}`, formData )
 
 		return !!response
 	},
