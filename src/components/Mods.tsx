@@ -184,10 +184,10 @@ function ModCard({ helper, indexForDelay, mod, previewMod, removeMod, applyMod, 
 			</div>
 			{!helper && (
 				<div className="modifier-buttons">
-					<button onClick={() => removeMod(mod)}>
-						<p><i className="fas fa-times"></i> Delete</p>
+					<button className="secondary" onClick={() => removeMod(mod)}>
+						<p><i className="fas fa-trash"></i> Delete</p>
 					</button>
-					<button onClick={() => editMod!(mod)}>
+					<button className="secondary" onClick={() => editMod!(mod)}>
 						<p><i className="fas fa-i-cursor"></i> Edit</p>
 					</button>
 				</div>
@@ -222,7 +222,7 @@ function HostedModCard({ modNameID, indexForDelay, removeMod, deleteMod, preview
 			<div className="modifier-top">
 				<h2>{modName}</h2>
 				<button onClick={() => removeMod(modNameID)}>
-					<p><i className="fas fa-times"></i></p>
+					<p><i className="fas fa-trash"></i></p>
 				</button>
 			</div>
 			<div className="modifier-buttons">
@@ -235,7 +235,7 @@ function HostedModCard({ modNameID, indexForDelay, removeMod, deleteMod, preview
 			</div>
 			<div className="modifier-buttons">
 				<button onClick={() => deleteMod(modNameID)}>
-					<p><i className="fas fa-times"></i> Delete</p>
+					<p><i className="fas fa-trash"></i> Delete</p>
 				</button>
 				<button onClick={() => editMod(modNameID)}>
 					<p><i className="fas fa-i-cursor"></i> Edit</p>

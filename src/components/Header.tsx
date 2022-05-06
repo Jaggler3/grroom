@@ -21,10 +21,7 @@ export default function Header({ projectID, projectName, onChangeProjectName, on
 
 	const onEditName = () => {
 		setEditingName(true)
-		setTimeout(() => {
-			editNameRef.current!.focus()
-			editNameRef.current!.setSelectionRange(0, projectName!.length)
-		}, 100)
+		setTimeout(() => editNameRef.current!.focus(), 100)
 	}
 
 	const onCompleteEditName = () => {
@@ -35,17 +32,12 @@ export default function Header({ projectID, projectName, onChangeProjectName, on
 		onChangeProjectName(newName!)
 		setEditingName(false)
 	}
-	const onHelp = () => {
-		
-	}
+	const onHelp = () => { }
 
-	const onOpenSignUp = () => {
-		window.open("/signup", "_blank")
-	}
+	const onOpenSignUp = () => window.open("/signup", "_blank")
 
 	useEffect(() => {
-		if(projectName)
-			setNewName(projectName)
+		if(projectName) setNewName(projectName)
 	}, [projectName])
 
 	return (
