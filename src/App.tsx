@@ -64,7 +64,7 @@ function Root({ hasSession, setHasSession }: { hasSession: boolean, setHasSessio
 	}
 }
 
-const stripePromise = loadStripe('pk_test_51I3zN8APSwzhwjAkbKJzwHHyyUwQjrmypndifIKtImuPKU1QOo7fmesUww7tcZPIM9lO7VoJDNG1HZgoH9TtZ6DO00VoA7CeAo');
+const stripePromise = loadStripe('');
 
 function App() {
 
