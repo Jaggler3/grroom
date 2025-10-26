@@ -167,7 +167,7 @@ function ModCard({ helper, indexForDelay, mod, previewMod, removeMod, applyMod, 
 			}}
 		>
 			<div className="modifier-top">
-				<h2>{mod.name} {mod.premium && <p className="premium-label">(PREMIUM)</p>}</h2>
+				<h2>{mod.name}</h2>
 				{helper && <button onClick={() => removeMod(mod)}>
 					<p><i className="fas fa-times"></i></p>
 				</button>}
