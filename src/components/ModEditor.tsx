@@ -106,7 +106,7 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 		<>
 			<div id="mod-editor">
 				<div id="editor-top">
-					<h3>{editing ? "New Mod" : "Editing Mod"}</h3>
+					<h3>{editing ? "New Modifier" : "Editing Modifier"}</h3>
 					<a id="help" href="https://github.com/Jaggler3/grroom/#custom-modifiers" rel="noreferrer" target="_blank">Need help?</a>
 				</div>
 				<button id="mod-editor-close" onClick={closeEditor}>
