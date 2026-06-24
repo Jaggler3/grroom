@@ -1,0 +1,25 @@
+.quality-badge {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0.6em 1em;
+	border: 2px solid #43CFBD;
+	border-radius: 0.6em;
+	background-color: white;
+	min-width: 5em;
+}
+
+.qb-value {
+	font-size: 1.4em;
+	font-weight: 700;
+	font-family: "Manrope", sans-serif;
+	line-height: 1;
+}
+
+.qb-label {
+	font-size: 0.75em;
+	color: #888;
+	margin-top: 0.2em;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { transform } from "@babel/standalone";
+import Sval from "sval";
 
 import AceEditor from "react-ace";
 
@@ -16,10 +16,6 @@ interface ModEditorProps {
 	saveMod: (originalName: string, mod: Modifier) => void
 }
 
-const validateJSIObject = (obj: any): boolean => {
-	return obj.class === "Function" && obj.node.type === "FunctionExpression" && obj.node.params.length === 2
-}
-
 export default function ModEditor({ initial, editing, saveMod, exit }: ModEditorProps) {
 
 	const [currentMod, setCurrentMod] = useState<Modifier>({
@@ -31,42 +27,33 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 	const [saveNeeded, setSaveNeeded] = useState(false)
 	const [showSaveModal, setShowSaveModal] = useState(false)
 
-	const [lastValidationDate, setLastValidationDate] = useState<number | null>(null)
-
 	const validate = async () => {
 		setValidationError("")
 		if (currentMod.name.trim().length === 0) {
 			setValidationError("GrroomError: Name is empty")
 		}
-		let code: string = currentMod.effect
+		const code: string = currentMod.effect
 		try {
-			code = transform(code, { presets: ['env'] }).code || "";
-			code = code.substring('"use strict";\n\n'.length)
-		} catch (e) {
-			setValidationError(e + "")
-			setValidated(false)
-			return
-		}
-		function initFunc(interpreter: any, scope: any) {
-			interpreter.setProperty(scope, "modify", interpreter.createNativeFunction(function (res: any) { return res; }))
-		}
-		// @ts-ignore
-		if (Interpreter) {
-			try {
-				// @ts-ignore
-				let parsed = new Interpreter(code, initFunc)
-				parsed.run()
-				const validationResult = validateJSIObject(parsed.value)
-				if (!validationResult) {
-					setValidationError("GrroomError: Not a valid function expression with params (rows, columnNames).")
-				} else {
-					setValidated(true)
-				}
-			} catch (e: any) {
-				setValidationError(e.toString().split("\n").shift())
+			let modifierFn: unknown = null
+
+			const interpreter = new Sval({
+				ecmaVer: "latest",
+				sourceType: "script",
+				sandBox: true,
+			})
+
+			interpreter.import("modify", (fn: unknown) => {
+				modifierFn = fn
+			})
+			interpreter.run(code)
+
+			if (typeof modifierFn !== "function" || modifierFn.length !== 2) {
+				setValidationError("GrroomError: Not a valid function expression with params (rows, columnNames).")
+			} else {
+				setValidated(true)
 			}
-		} else {
-			setValidationError("GrroomError: Could not initialize interpreter.")
+		} catch (e: any) {
+			setValidationError(e.toString().split("\n").shift())
 		}
 	}
 
@@ -82,9 +69,7 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 	}
 
 	useEffect(() => {
-		const now = Date.now()
 		validate()
-		setLastValidationDate(now)
 	}, [currentMod.effect])
 
 	const updateName = (e: { target: { value: string }}) => {
@@ -106,7 +91,7 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 		<>
 			<div id="mod-editor">
 				<div id="editor-top">
-					<h3>{editing ? "New Mod" : "Editing Mod"}</h3>
+					<h3>{editing ? "New Modifier" : "Edit Modifier"}</h3>
 					<a id="help" href="https://github.com/Jaggler3/grroom/#custom-modifiers" rel="noreferrer" target="_blank">Need help?</a>
 				</div>
 				<button id="mod-editor-close" onClick={closeEditor}>
@@ -147,7 +132,7 @@ export default function ModEditor({ initial, editing, saveMod, exit }: ModEditor
 					)}
 				</div>
 				<div id="editor-buttons">
-					<button onClick={save} className={(!validated || !saveNeeded) ? "disabled" : ""}>
+					<button onClick={save} className={!validated ? "disabled" : ""}>
 						<p>Save</p>
 					</button>
 				</div>

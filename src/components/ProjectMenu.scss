@@ -1,62 +1,38 @@
 @import "../colors";
 
-#project-menu-wrapper {
-	width: 100%;
-
+#project-menu {
 	display: flex;
-	justify-content: center;
+	position: relative;
+	height: 2.4em;
+	background-color: #eee;
+	border-radius: 1.2em;
+	width: fit-content;
 
-	#project-menu {
-		width: fit-content;
+	#project-step-indicator {
+		position: absolute;
+		height: 2.4em;
+		border-radius: 1.2em;
+		transition: left .2s, width .2s, background-color .2s;
+		z-index: 0;
+		box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
+	}
+
+	.project-menu-item {
+		z-index: 1;
+		padding: 0 1.5em;
 		display: flex;
-		justify-content: center;
-		height: 3em;
-		margin-bottom: 1em;
-		position: relative;
-		background-color: white;
-		border-radius: 1.5em;
-		box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+		align-items: center;
+		cursor: pointer;
+		font-weight: 600;
+		font-size: 0.85em;
+		color: #666;
+		user-select: none;
+		border-radius: 1.2em;
+		transition: color .2s;
+		white-space: nowrap;
 
-		#project-step-indicator {
-			position: absolute;
-			background-color: $button-color;
-			height: 2.5em;
-			width: 6.5em;
-			margin-left: 0.25em;
-			z-index: 0;
-			margin-top: .25em;
-			border-radius: 1.25em;
-			box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-			transition: .25s left, .25s background-color;
-		}
-
-		.project-menu-item {
-			z-index: 1;
-			width: 7em;
-			text-align: center;
-			line-height: 3em;
-			opacity: 0.5;
-			cursor: pointer;
-			transition: .25s opacity;
-			font-weight: bold;
-
-			> a {
-				text-decoration: none;
-				color: black;
-				transition: .25s color;
-			}
-
-			&:hover {
-				opacity: 1;
-			}
-
-			&.project-menu-item-selected {
-				opacity: 1;
-				> a {
-					text-decoration: none;
-					color: white;
-				}
-			}
+		&.selected {
+			color: white;
 		}
 	}
 }

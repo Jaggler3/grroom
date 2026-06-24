@@ -3,15 +3,16 @@
 #mod-editor {
 	width: 40em;
 	max-width: 95vw;
-	height: 50em;
-	max-height: 95vh;
-	background-color: #F3F3F3;
+	height: 45em;
+	max-height: 90vh;
+	background-color: white;
 	display: flex;
 	flex-direction: column;
 	box-sizing: border-box;
 	padding: 1em;
 	border-radius: 1em;
 	position: relative;
+	box-shadow: 0 0.5em 2em rgba(0, 0, 0, 0.15);
 
 	> #editor-top {
 		display: flex;
@@ -127,14 +128,15 @@
 		width: 30em;
 		max-width: 90vw;
 		height: fit-content;
-		background-color: #F3F3F3;
+		background-color: white;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		box-sizing: border-box;
-		padding: 1em;
+		padding: 1.5em;
 		border-radius: 1em;
 		position: relative;
+		box-shadow: 0 0.25em 1em rgba(0, 0, 0, 0.15);
 
 
 		#actions {

@@ -1,18 +1,14 @@
 import { DataSet } from '../core/DataSet'
-import React, { createRef, useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import BaseTable, { AutoResizer, Column, ColumnShape } from 'react-base-table'
-import 'react-base-table/styles.css'
+import { AgGridReact } from 'ag-grid-react'
+import { AllCommunityModule, CellValueChangedEvent, ColDef, ModuleRegistry, RowClassParams } from 'ag-grid-community'
+
+ModuleRegistry.registerModules([AllCommunityModule])
+
+import 'ag-grid-community/styles/ag-grid.css'
+import 'ag-grid-community/styles/ag-theme-alpine.css'
 import './CleanerTable.scss'
-import { createGlobalStyle } from 'styled-components'
-
-const GlobalStyle = createGlobalStyle<{ columnCount: number }>`
-	${({ columnCount }) => new Array(columnCount).fill("").map((_, index) =>`
-		.AdvanceTable.active-col-${index + 1} [data-col-idx="${index + 1}"]
-	`).join(",")} {
-		background: #f3f3f3;
-	}
-`
 
 interface CleanerTableProps {
 	dataSet: DataSet;
@@ -20,79 +16,93 @@ interface CleanerTableProps {
 	additions?: number[];
 	deletions?: number[];
 	getBeforeData?: (row: number, cell: string) => string;
+	onCellEdit?: (rowIndex: number, column: string, value: string, dataSet: DataSet) => DataSet;
 }
 
-const headerCellProps = ({ columnIndex }: any) => ({ 'data-col-idx': columnIndex })
+export default function CleanerTable({ dataSet, jumpToIndex, additions, onCellEdit }: CleanerTableProps) {
 
-export default function CleanerTable({ dataSet, jumpToIndex, additions: additions, getBeforeData }: CleanerTableProps) {
+	const gridRef = useRef<AgGridReact>(null)
+	const [gridApi, setGridApi] = useState<any>(null)
 
-	const tableRef = createRef<BaseTable<unknown>>()
+	const onGridReady = useCallback((params: any) => {
+		setGridApi(params.api)
+	}, [])
 
 	useEffect(() => {
-		if(jumpToIndex && jumpToIndex !== -1) {
-			if(tableRef?.current) {
-				tableRef.current.scrollToRow(jumpToIndex)
-			}
+		if (jumpToIndex !== undefined && jumpToIndex !== -1 && gridApi) {
+			gridApi.ensureIndexVisible(jumpToIndex)
 		}
-	}, [jumpToIndex])
+	}, [jumpToIndex, gridApi])
 
-	const getClasses = ({ rowIndex }: any) => additions && additions.includes(rowIndex) ? "highlight" : ""
+	const onCellValueChanged = useCallback((event: CellValueChangedEvent) => {
+		if (!onCellEdit) return
+		const rowIndex = event.rowIndex
+		const col = event.colDef.field
+		if (rowIndex === null || rowIndex === undefined || !col) return
+		onCellEdit(rowIndex, col, event.newValue ?? "", dataSet)
+	}, [onCellEdit, dataSet])
 
-	const columns = React.useMemo((): ColumnShape[] => [
-		{
-			key: "#",
-			title: "",
-			width: 50,
-			align: "center",
-			cellRenderer: ({ rowIndex }) => <p>{rowIndex + 1}</p>,
-			frozen: Column.FrozenDirection.LEFT,
-		},
-		...dataSet.columns.map((col) => ({
-			key: col,
-			dataKey: col,
-			width: 150,
-			maxWidth: 300,
-			resizable: true,
-			title: col,
-			className: getClasses
-		}))
-	], [dataSet.columns])
+	const rowClassRules = useMemo(() => ({
+		'highlight': (params: RowClassParams) => {
+			if (!additions) return false
+			return additions.includes(params.rowIndex)
+		}
+	}), [additions])
 
-	const cellProps = ({ columnIndex, rowIndex }: any) => ({
-		'data-col-idx': columnIndex,
-		onMouseEnter: (e:any) => {
-			if(!tableRef) return
-			const table = tableRef?.current?.getDOMNode()
-			if(!table) return
-			table.classList.add(`active-col-${columnIndex}`)
-		},
-		onMouseLeave: () => {
-			if(!tableRef) return
-			const table = tableRef?.current?.getDOMNode()
-			if(!table) return
-			table.classList.remove(`active-col-${columnIndex}`)
-		},
-	})
+	const columnDefs = useMemo((): ColDef[] => {
+		const cols: ColDef[] = [
+			{
+				colId: '_rowNumber',
+				headerName: '',
+				width: 50,
+				pinned: 'left',
+				sortable: false,
+				suppressMovable: true,
+				valueGetter: (params: any) => params.node.rowIndex + 1,
+			}
+		]
+
+		const colNames = dataSet.columns
+		for (let i = 0; i < colNames.length; i++) {
+			const isLast = i === colNames.length - 1
+			cols.push({
+				field: colNames[i],
+				headerName: colNames[i],
+				width: 150,
+				maxWidth: isLast ? undefined : 300,
+				resizable: true,
+				editable: true,
+				flex: isLast ? 1 : undefined,
+			})
+		}
+
+		return cols
+	}, [dataSet.columns])
 
 	return (
-		<>
-			<div id="main-table-container">
-				<GlobalStyle columnCount={dataSet.columns.length} />
-				<AutoResizer>
-					{(size) => (
-						<BaseTable
-							ref={tableRef}
-							classPrefix="AdvanceTable"
-							data={dataSet.items}
-							columns={columns}
-							cellProps={cellProps}
-							headerCellProps={headerCellProps}
-							fixed
-							{...size}
-						/>
-					)}
-				</AutoResizer>
+			<div id="main-table-container" className="ag-theme-alpine ag-theme-grroom">
+				<AgGridReact
+					ref={gridRef}
+					rowData={dataSet.items}
+					columnDefs={columnDefs}
+					onGridReady={onGridReady}
+					onCellValueChanged={onCellValueChanged}
+					rowClassRules={rowClassRules}
+					headerHeight={32}
+					rowHeight={28}
+					stopEditingWhenCellsLoseFocus={true}
+					columnHoverHighlight={true}
+					enableCellTextSelection={true}
+					ensureDomOrder={true}
+					suppressMovableColumns={true}
+					suppressRowClickSelection={true}
+					suppressDragLeaveHidesColumns={true}
+					defaultColDef={{
+						sortable: false,
+						suppressMovable: true,
+						filter: false,
+					}}
+				/>
 			</div>
-		</>
 	)
 }

@@ -1,6 +1,5 @@
-import React, { useState, useEffect, ChangeEvent } from 'react'
+import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Oval } from 'react-loader-spinner'
 
 import './GrroomView.scss'
 import Header from '../components/Header'
@@ -15,53 +14,20 @@ import ModEditor from '../components/ModEditor'
 import { ExampleModText } from '../content/ExampleMod'
 import { LoadLocalMods, LocalEffect, RemoveModFromCookies, SaveMod } from '../core/ModifierUtils'
 import { Deserialize, SaveFile, Serialize } from '../core/CSVSerialize'
-import Net, { InfoResponse } from '../net/Net'
-import { useNavigate } from 'react-router-dom';
-import CleanMenu from '../components/CleanMenu';
-import { getParams } from '../core/Util'
-import ComingSoon from './main-view/ComingSoon'
+import CleanMenu from '../components/CleanMenu'
+import Analyze from './Analyze'
+import Present from './Present'
 
-const FIVE_KBS: number = 5 * 1024
-
-export interface GrroomViewProps {
-	projectID?: string
-}
-export default function GrroomView({ projectID }: GrroomViewProps) {
-
-	const { step } = getParams()
-	const navigate = useNavigate()
+export default function GrroomView() {
 
 	const [showOverlay, setShowOverlay] = useState(true)
-	const [overlayPurpose, setOverlayPurpose] = useState(projectID ? "loading" : "welcome")
+	const [overlayPurpose, setOverlayPurpose] = useState("welcome")
 	const [dataSet, setDataSet] = useState<DataSet>(EmptyDataSet)
-	const [userInfo, setUserInfo] = useState<InfoResponse | undefined>()
-	const [signedIn, setSignedIn] = useState<boolean>(false)
-	const [changesMade, setChangesMade] = useState(false)
-
-	useEffect(() => {
-		(async () => {
-			if(!await Net.verifySession()) {
-				if(window.location.href.includes("project")) {
-					window.location.replace("/")
-				}
-				return
-			}
-			setUserInfo(await Net.getUserInfo())
-			setSignedIn(true)
-			if (projectID) {
-				const projectContents = await Net.readProject(projectID)
-				const info = await Net.getProjectInfo(projectID)
-				if (projectContents) {
-					importString(info.name, projectContents)
-				}
-			}
-		})()
-	}, [])
+	const [step, setStep] = useState<string | undefined>()
 
 	const importString = (name: string, contents: string) => {
 		const parsedDataSet = Deserialize(name, contents.trim())
 		setShowOverlay(false)
-		setChangesMade(false)
 		setDataSet(parsedDataSet)
 	}
 
@@ -70,77 +36,42 @@ export default function GrroomView({ projectID }: GrroomViewProps) {
 		setDataSet(TestDataSet)
 	}
 
-	const backToDashboardButton = () => {
-		if (changesMade) {
-			setOverlayPurpose("confirm discard to dashboard")
-			setShowOverlay(true)
-		} else {
-			backToDashboard()
-		}
-	}
-
-	const selectUpload = (originState: string) => {
+	const selectUpload = () => {
 		const fileInput = document.createElement("input")
 		fileInput.type = "file"
 		fileInput.accept = "csv"
 		fileInput.multiple = false
-		fileInput.addEventListener("change", async () => {
-			const formData = new FormData()
+		fileInput.addEventListener("change", () => {
 			if (fileInput.files) {
-				formData.append('csv-file', fileInput.files[0])
-				if (fileInput.files[0].size > FIVE_KBS) {
-					setOverlayPurpose("disallowed " + originState)
-					setShowOverlay(true)
-					return;
+				const file = fileInput.files[0]
+				const reader = new FileReader()
+				reader.onload = (e) => {
+					const contents = e.target?.result as string
+					if (contents) {
+						importString(file.name, contents)
+					}
 				}
-
-				const fileContents = await Net.uploadBounce(formData)
-				if (fileContents) {
-					importString(fileInput.files[0].name, fileContents)
-				}
+				reader.readAsText(file)
 			}
 		})
 		fileInput.click()
 	}
 
-	const backToDashboard = () => navigate("/")
-
-	const onChangeProjectName = async (newName: string) => {
-		if(newName === dataSet.name) return
+	const onChangeProjectName = (newName: string) => {
 		setDataSet({ ...dataSet, name: newName })
-		await Net.renameProject(projectID!, newName)
-	}
-
-	const reopenUpload = () => {
-		if (changesMade) {
-			setOverlayPurpose("confirm discard")
-			setShowOverlay(true)
-		} else {
-			selectUpload("none")
-		}
-	}
-
-	const closeOverlay = () => setShowOverlay(false)
-
-	const closeDisallowed = (originState: string) => {
-		setOverlayPurpose(originState)
-		if (originState === "none") {
-			setShowOverlay(false)
-		}
 	}
 
 	return (
 		<div id="main">
 			<Header
-				projectID={projectID}
 				projectName={dataSet.name}
-				onImport={reopenUpload}
-				onBack={backToDashboardButton}
-				signedIn={signedIn}
+				step={step}
+				onChangeStep={setStep}
 				onChangeProjectName={onChangeProjectName}
 			/>
-			{!step && <Clean {...{userInfo, projectID, dataSet, setDataSet, setChangesMade}} />}
-			{step && <ComingSoon />}
+			{!step && <Clean {...{dataSet, setDataSet}} />}
+			{step === "analyze" && <Analyze dataSet={dataSet} />}
+			{step === "present" && <Present dataSet={dataSet} />}
 			<AnimatePresence>
 				{showOverlay && (
 					<motion.div
@@ -152,55 +83,7 @@ export default function GrroomView({ projectID }: GrroomViewProps) {
 						transition={{ duration: .25 }}
 					>
 						{overlayPurpose === "welcome" && (
-							<Welcome selectUpload={() => selectUpload("welcome")} selectExample={selectExample} />
-						)}
-						{overlayPurpose === "loading" && (
-							<div id="loading-spinner">
-								<Oval
-									color="#5697E3"
-									secondaryColor='white'
-									height={100}
-									width={100}
-								/>
-							</div>
-						)}
-						{overlayPurpose === "confirm discard" && (
-							<div id="confirm">
-								<p>You have unsaved changes. Are you sure you would like to import a new data set?</p>
-								<div className="buttons">
-									<button className="cancel" onClick={closeOverlay}>
-										<p>Cancel</p>
-									</button>
-									<button onClick={() => selectUpload("none")}>
-										<p>Continue</p>
-									</button>
-								</div>
-							</div>
-						)}
-						{overlayPurpose === "confirm discard to dashboard" && (
-							<div id="confirm">
-								<p>You have unsaved changes. Are you sure you would like go back to the dashboard?</p>
-								<div className="buttons">
-									<button className="cancel" onClick={closeOverlay}>
-										<p>Cancel</p>
-									</button>
-									<button onClick={() => backToDashboard()}>
-										<p>Continue</p>
-									</button>
-								</div>
-							</div>
-						)}
-						{overlayPurpose.startsWith("disallowed") && (
-							<div id="disallowed">
-								<p><strong>Aw, snap.</strong></p>
-								<br />
-								<p>The selected file is too large to upload, either due to your current plan or Grroom service limits.</p>
-								<div className="buttons">
-									<button onClick={() => closeDisallowed(overlayPurpose.split(" ")[1])}>
-										<p>Go Back</p>
-									</button>
-								</div>
-							</div>
+							<Welcome selectUpload={selectUpload} selectExample={selectExample} />
 						)}
 					</motion.div>
 				)}
@@ -212,15 +95,12 @@ export default function GrroomView({ projectID }: GrroomViewProps) {
 type Setter<T> = React.Dispatch<React.SetStateAction<T>>
 
 interface CleanProps {
-	projectID?: string,
-	userInfo?: InfoResponse;
 	dataSet: DataSet;
 	setDataSet: Setter<DataSet>;
-	setChangesMade: Setter<boolean>;
 }
-function Clean({ dataSet, setDataSet, projectID, userInfo, setChangesMade }: CleanProps) {
+function Clean({ dataSet, setDataSet }: CleanProps) {
 
-	const [showOverlay, setShowOverlay] = useState(false) // no projectID: welcome screen, yes projectID: loading screen
+	const [showOverlay, setShowOverlay] = useState(false)
 	const [overlayPurpose, setOverlayPurpose] = useState("")
 	const [selectedMod, setSelectedMod] = useState<Modifier>({ id: "", name: "", effect: "" })
 	const [previewType, setPreviewType] = useState("")
@@ -233,16 +113,6 @@ function Clean({ dataSet, setDataSet, projectID, userInfo, setChangesMade }: Cle
 		} else {
 			setDataSet({ ...LocalEffect(dataSet, mod) })
 		}
-		setChangesMade(true)
-	}
-
-	const startLoading = () => {
-		setShowOverlay(true)
-		setOverlayPurpose("loading")
-	}
-
-	const endLoading = () => {
-		setShowOverlay(false)
 	}
 
 	const openModPreview = (mod: Modifier, suggested: boolean) => {
@@ -290,29 +160,26 @@ function Clean({ dataSet, setDataSet, projectID, userInfo, setChangesMade }: Cle
 
 	const createExport = () => {
 		SaveFile(dataSet.name, Serialize(dataSet))
-		setChangesMade(false)
 	}
 
-	const createSave = async () => {
-		const oldPurpose = overlayPurpose
-		const wasShowing = showOverlay
-		setOverlayPurpose("loading")
-		setShowOverlay(true)
-		await Net.saveProject(projectID!, Serialize(dataSet))
-		setShowOverlay(wasShowing)
-		setOverlayPurpose(oldPurpose)
-		setChangesMade(false)
+	const onCellEdit = (rowIndex: number, column: string, value: string, ds: DataSet): DataSet => {
+		const updated = { ...ds }
+		updated.items = ds.items.map((item, i) => {
+			if (i !== rowIndex) return item
+			return { ...item, [column]: value }
+		})
+		setDataSet(updated)
+		return updated
 	}
 
 	return (
 		<>
 			<div id="center">
 				<div id="table-wrapper">
-					<CleanMenu canSave={!!projectID} {...{createSave, createExport}} />
-					<CleanerTable dataSet={dataSet} />
+					<CleanMenu createExport={createExport} />
+					<CleanerTable dataSet={dataSet} onCellEdit={onCellEdit} />
 				</div>
 				<Mods
-					premium={userInfo?.plan !== "Lite"}
 					dataSet={dataSet}
 					applyMod={applyMod}
 					previewMod={openModPreview}
@@ -320,8 +187,6 @@ function Clean({ dataSet, setDataSet, projectID, userInfo, setChangesMade }: Cle
 					localMods={localMods}
 					removeLocalMod={removeLocalMod}
 					editMod={editMod}
-					startLoading={startLoading}
-					endLoading={endLoading}
 				/>
 			</div>
 			<AnimatePresence>
@@ -360,19 +225,10 @@ function Clean({ dataSet, setDataSet, projectID, userInfo, setChangesMade }: Cle
 								saveMod={saveLocalMod}
 							/>
 						)}
-						{overlayPurpose === "loading" && (
-							<div id="loading-spinner">
-								<Oval
-									color="#5697E3"
-									secondaryColor='white'
-									height={100}
-									width={100}
-								/>
-							</div>
-						)}
 					</motion.div>
 				)}
 			</AnimatePresence>
 		</>
 	)
 }
+

@@ -1,4 +1,4 @@
-import { HelpModifier, ModifierGenerator } from "../core/Modifier"
+import { HelpModifier } from "../core/Modifier"
 import { DataSet } from "../core/DataSet"
 import CapitalizeModifier from "./suggestions/CapitalizeModifier";
 import TrimModifier from "./suggestions/TrimModifier";
@@ -7,20 +7,13 @@ import PhoneFormatModifier from "./suggestions/PhoneFormatModifier";
 const AllHelpModifiers = [
 	CapitalizeModifier,
 	TrimModifier,
+	PhoneFormatModifier,
 ]
 
-const PremiumModifiers: ModifierGenerator[] = [
-	PhoneFormatModifier
-]
-
-export default function Suggest(premium: boolean, oldSuggestions: HelpModifier[], data: DataSet) {
+export default function Suggest(_premium: boolean, oldSuggestions: HelpModifier[], data: DataSet) {
 	let suggestions: HelpModifier[] = [];
 
-	// WIP: Run all modifier detection functions simultaneously,
-	//      in a web worker if available, for the first 10,000 rows
-
-
-	for(const modifier of [...PremiumModifiers, ...AllHelpModifiers]) {
+	for(const modifier of AllHelpModifiers) {
 		const result = modifier({
 			lastModified: data.lastModified,
 			items: [...data.items],

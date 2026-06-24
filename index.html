@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8" />
-	<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+	<link rel="icon" href="/favicon.ico" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="theme-color" content="#000000" />
 	<meta name="description" content="Grroom CSV data cleanup tool" />
@@ -15,8 +15,6 @@
 	<link rel="manifest" href="/site.webmanifest">
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;800&family=Lobster&display=swap" rel="stylesheet">
-	<script src="js-interpreter/acorn.js"></script>
-	<script src="js-interpreter/interpreter.js"></script>
 	<title>Grroom</title>
 	<style>
 		.rc-tooltip {
@@ -28,6 +26,7 @@
 <body>
 	<noscript>You need to enable JavaScript to run this app.</noscript>
 	<div id="root"></div>
+	<script type="module" src="/src/index.tsx"></script>
 </body>
 
 </html>

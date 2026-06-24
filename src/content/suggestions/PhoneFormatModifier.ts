@@ -58,7 +58,6 @@ const PhoneFormatModifier: ModifierGenerator = (data: DataSet) => {
 				desc: "Remove unecessary characters from phone numbers. Whitespace will be trimmed.",
 				helpEffect: effect(column),
 				effect: "",
-				premium: true
 			})
 		}
 	}

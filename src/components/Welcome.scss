@@ -1,34 +1,46 @@
 @import '../colors';
 
 #welcome {
-	width: 40em;
-	max-width: 95vw;
-	height: 30em;
-	max-height: 95vh;
-	background-color: #F3F3F3;
+	width: 36em;
+	max-width: 90vw;
+	background-color: white;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	border-radius: 1em;
+	padding: 3em 2em;
+	box-shadow: 0 0.5em 2em rgba(0, 0, 0, 0.15);
 
 	> h1 {
 		font-family: 'Lobster', sans-serif;
-		margin-bottom: 2em;
+		margin-bottom: 1em;
+		font-size: 2em;
+	}
+
+	> p {
+		color: #666;
 	}
 
 	> #welcome-actions {
-		margin: 4em 0 3em 0;
+		margin: 2em 0;
+		display: flex;
+		align-items: center;
 
 		> button {
-			width: 15em;
-			margin: 0 1em;
+			width: 14em;
+			margin: 0 0.75em;
+			border-radius: 2em;
+		}
+
+		> span {
+			color: #999;
 		}
 	}
 
 	> #signup-suggest {
-		font-size: .75em;
-		opacity: .9;
+		font-size: .8em;
+		opacity: .8;
 		cursor: default;
 
 		> a {

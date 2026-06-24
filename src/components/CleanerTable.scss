@@ -3,40 +3,81 @@
 	position: relative;
 }
 
-// override default variables for BaseTable
-$table-prefix: AdvanceTable;
+.ag-theme-grroom {
+	--ag-font-family: 'Manrope', sans-serif;
+	--ag-font-size: 15px;
+	--ag-cell-horizontal-padding: 7.5px;
+	--ag-row-hover-color: #f3f3f3;
+	--ag-column-hover-color: #f3f3f3;
+	--ag-border-color: #ddd;
+	--ag-header-background-color: #f8f8f8;
+	--ag-odd-row-background-color: #fff;
+	--ag-even-row-background-color: #fff;
 
-$table-font-size: 15px;
-$table-padding-left: 15px;
-$table-padding-right: 15px;
-$column-padding: 7.5px;
-$show-frozen-rows-shadow: false;
-$show-frozen-columns-shadow: true;
-
-@import '~react-base-table/es/_BaseTable.scss';
-
-.AdvanceTable {
-	font-family: 'Manrope', sans-serif;
-
-	.highlight {
-		background-color: yellow !important;
+	.ag-header-cell {
+		font-weight: 600;
+		padding-left: var(--ag-cell-horizontal-padding);
+		padding-right: var(--ag-cell-horizontal-padding);
 	}
-	.delete {
-		background-color: red !important;
-		color: white !important;
+
+	.ag-cell {
+		outline: none !important;
+		border: none !important;
+		padding-left: var(--ag-cell-horizontal-padding);
+		padding-right: var(--ag-cell-horizontal-padding);
+		line-height: 28px;
+		transition: background-color 0.15s;
+		white-space: pre;
+
+		&:hover {
+			background-color: #e3e3e3 !important;
+		}
 	}
-}
 
-.AdvanceTable__row:hover, .AdvanceTable__row--hovered {
-	background-color: white;
-}
+	.ag-cell-focus {
+		border: none !important;
+		outline: none !important;
+	}
 
-.AdvanceTable__row:hover {
-	background-color: #f3f3f3;
-}
+	.ag-row {
+		border-bottom: 1px solid #eee;
+	}
 
-.AdvanceTable__row-cell {
-	&:hover {
-		background-color: #e3e3e3 !important;
+	.ag-row.highlight {
+		background-color: #ffffcc !important;
+	}
+
+	.ag-row.highlight .ag-cell {
+		background-color: #ffffcc !important;
+	}
+
+	.ag-row.ag-row-hover {
+		.ag-cell {
+			background-color: #f3f3f3;
+		}
+	}
+
+	.ag-row.ag-row-hover.highlight {
+		.ag-cell {
+			background-color: #ffffcc;
+		}
+	}
+
+	.ag-root-wrapper {
+		border: none;
+		border-left: 1px solid var(--ag-border-color);
+		border-right: 1px solid var(--ag-border-color);
+	}
+
+	.ag-header {
+		border-bottom: 1px solid var(--ag-border-color);
+	}
+
+	.ag-pinned-left-header {
+		border-right: 1px solid var(--ag-border-color);
+	}
+
+	.ag-pinned-left-cols-container {
+		border-right: 1px solid var(--ag-border-color);
 	}
 }

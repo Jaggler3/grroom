@@ -6,7 +6,6 @@ export interface Modifier {
 	id: string,
 	name: string,
 	effect: string,
-	premium?: boolean
 }
 
 export interface HelpModifier extends Modifier {

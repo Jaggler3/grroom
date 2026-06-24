@@ -1,0 +1,136 @@
+#present, #present-fullscreen {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	padding: 1em;
+	gap: 1em;
+	overflow-y: auto;
+	background-color: #F3F3F3;
+}
+
+#present-fullscreen {
+	padding: 0;
+
+	> #pfs-header {
+		display: flex;
+		align-items: center;
+		padding: 0.75em 1em;
+		background-color: white;
+		border-bottom: 1px solid #eee;
+
+		> h2 {
+			flex: 1;
+			font-size: 1.1em;
+			font-weight: 700;
+		}
+
+		> button {
+			padding: 0.4em 1em;
+			font-size: 0.8em;
+		}
+	}
+}
+
+.present-actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	> h3 {
+		font-size: 1em;
+		font-weight: 700;
+		color: #555;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+}
+
+.pa-buttons {
+	display: flex;
+	gap: 0.5em;
+
+	> button {
+		padding: 0.4em 1em;
+		font-size: 0.8em;
+	}
+}
+
+.present-summary {
+	display: flex;
+	gap: 1em;
+}
+
+.present-distributions {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75em;
+
+	> h3 {
+		font-size: 1em;
+		font-weight: 700;
+		color: #555;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+}
+
+.pd-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(22em, 1fr));
+	gap: 1em;
+}
+
+.pd-card {
+	background-color: white;
+	border-radius: 0.75em;
+	padding: 1em;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	display: flex;
+	flex-direction: column;
+	gap: 0.75em;
+	border-top: 4px solid #43CFBD;
+}
+
+.pd-header {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+}
+
+.pd-name {
+	font-weight: 700;
+	font-size: 1em;
+	font-family: "Manrope", sans-serif;
+}
+
+.pd-type {
+	font-size: 0.65em;
+	font-weight: 700;
+	color: white;
+	padding: 0.15em 0.5em;
+	border-radius: 0.3em;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.pd-empty {
+	color: #ccc;
+	font-style: italic;
+	font-size: 0.85em;
+	text-align: center;
+	padding: 1em 0;
+}
+
+.present-table {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+
+	> h3 {
+		font-size: 1em;
+		font-weight: 700;
+		color: #555;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+}

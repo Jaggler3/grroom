@@ -1,0 +1,56 @@
+.distribution-chart {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3em;
+	font-family: "Manrope", sans-serif;
+}
+
+.dc-row {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+}
+
+.dc-label {
+	width: 6em;
+	font-size: 0.8em;
+	text-align: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: #555;
+	flex-shrink: 0;
+}
+
+.dc-bar-wrapper {
+	flex: 1;
+	height: 1.2em;
+	background-color: #f0f0f0;
+	border-radius: 0.3em;
+	overflow: hidden;
+	min-width: 4em;
+}
+
+.dc-bar {
+	height: 100%;
+	border-radius: 0.3em;
+	transition: width 0.3s ease;
+	min-width: 2px;
+}
+
+.dc-count {
+	width: 2.5em;
+	font-size: 0.8em;
+	font-weight: 600;
+	text-align: right;
+	color: #333;
+	flex-shrink: 0;
+}
+
+.dc-pct {
+	width: 2.8em;
+	font-size: 0.75em;
+	color: #999;
+	text-align: right;
+	flex-shrink: 0;
+}

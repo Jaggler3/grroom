@@ -2,35 +2,21 @@ import React from "react"
 import "./CleanMenu.scss"
 
 interface CleanMenuProps {
-	canSave: boolean;
-	createSave: () => void;
 	createExport: () => void;
 }
 
-export default function CleanMenu({ canSave, createSave, createExport }: CleanMenuProps) {
+export default function CleanMenu({ createExport }: CleanMenuProps) {
 	return (
 		<div id="clean-menu">
 			<div id="cm-search-wrapper">
 				<i className="fas fa-search" />
-				<input type="text" id="cm-search" placeholder="Search..." />
+				<input type="text" id="cm-search" placeholder="Search..." readOnly />
 			</div>
-			<button>
-				<i className="fas fa-undo-alt"></i>
-			</button>
-			<button disabled>
-				<i className="fas fa-redo-alt"></i>
-			</button>
-			<button>
-				<i className="fas fa-font"></i>
-				<i className="fas fa-font small"></i>
-			</button>
-			<button>
-				<i className="fas fa-font small"></i>
-				<i className="fas fa-font"></i>
-			</button>
-			<button disabled>
-				<i className="fas fa-trash"></i>
-			</button>
+			<div id="cm-actions">
+				<button id="cm-export" onClick={createExport}>
+					<i className="fas fa-download"></i> Export
+				</button>
+			</div>
 		</div>
 	)
 }

@@ -1,106 +1,50 @@
-header {
+@import '../colors';
+
+#header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	box-sizing: border-box;
-	margin-bottom: 1em;
-	padding: 0 2em;
-	height: 3.5em;
-	width: 100%;
-
-	> .space {
-		flex: 1
-	}
-
-	 #service-name {
-		font-size: 2em;
-		font-weight: 800;
-		padding: 0 .5em .3em;
-		font-family: 'Lobster', sans-serif;
-		user-select: none;
-	}
+	padding: 0.5em 1em;
+	gap: 1em;
 
 	> #header-left {
-		flex: 2;
 		display: flex;
-		flex-direction: row;
 		align-items: center;
-	}
-	> #header-middle {
-		text-align: center;
-	}
-	> #header-middle-float {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		text-align: center;
-		pointer-events: none;
-	}
-	> #header-right {
-		flex: 2;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: flex-end;
-	}
 
-	#breadcrumbs {
-		display: flex;
-		flex-direction: column;
-		padding: 0 1em;
-
-		> #breadcrumbs-top {
-			font-size: .8em;
-			font-weight: bold;
-			word-spacing: .2em;
-		}
-		> #breadcrumbs-bottom {
-			font-size: 1.5em;
-			line-height: 1em;
-			max-height: 1em;
-
-			> input {
-				font-size: 1em;
-				line-height: 1em;
-				padding: 0;
-				border: none;
-				outline: none;
-				background-color: transparent;
-				font-family: 'Manrope', sans-serif;
-				margin: 0;
-				margin-top: -.5em;
-			}
+		#header-name {
+			font-size: 1.2em;
+			font-weight: 600;
+			cursor: pointer;
+			user-select: none;
+			white-space: nowrap;
+			color: #333;
 
 			> i {
-				font-size: .6em;
-				width: 1em;
-				height: 1em;
-				color: gray;
-				padding-left: 0.5em;
-				opacity: 0.75;
-				cursor: pointer;
-				transition: .1s opacity;
-				&:hover {
-					opacity: 1;
-				}
+				font-size: 0.7em;
+				margin-left: 0.5em;
+				color: #999;
+				opacity: 0;
+				transition: opacity .15s;
 			}
+
+			&:hover > i {
+				opacity: 1;
+			}
+		}
+
+		#header-name-input {
+			font-size: 1.2em;
+			font-weight: 600;
+			padding: 0.2em 0.4em;
+			border: 1px solid $button-color;
+			border-radius: 0.3em;
+			outline: none;
+			font-family: 'Manrope', sans-serif;
+			width: 12em;
 		}
 	}
 
-	#back, #help, #sign-up {
-		cursor: pointer;
-		width: 2em;
-		height: 2em;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background-color: rgba(0, 0, 0, 0.1);
-		color: #646464;
-		border-radius: 50%;
-	}
-
-	#sign-up {
-		margin-right: 1em;
+	> #header-right {
+		flex: 1;
 	}
 }
