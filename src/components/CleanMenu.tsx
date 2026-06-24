@@ -10,7 +10,7 @@ export default function CleanMenu({ createExport }: CleanMenuProps) {
 		<div id="clean-menu">
 			<div id="cm-search-wrapper">
 				<i className="fas fa-search" />
-				<input type="text" id="cm-search" placeholder="Search..." readOnly />
+				<input type="text" id="cm-search" placeholder="Search..." />
 			</div>
 			<div id="cm-actions">
 				<button id="cm-export" onClick={createExport}>

@@ -54,7 +54,7 @@ export default function CleanerTable({ dataSet, jumpToIndex, additions, onCellEd
 			{
 				colId: '_rowNumber',
 				headerName: '',
-				width: 50,
+				width: 65,
 				pinned: 'left',
 				sortable: false,
 				suppressMovable: true,

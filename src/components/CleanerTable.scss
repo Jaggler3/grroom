@@ -4,7 +4,7 @@
 }
 
 .ag-theme-grroom {
-	--ag-font-family: 'Manrope', sans-serif;
+	--ag-font-family: 'Inter', sans-serif;
 	--ag-font-size: 15px;
 	--ag-cell-horizontal-padding: 7.5px;
 	--ag-row-hover-color: #f3f3f3;
@@ -14,25 +14,45 @@
 	--ag-odd-row-background-color: #fff;
 	--ag-even-row-background-color: #fff;
 
-	.ag-header-cell {
-		font-weight: 600;
-		padding-left: var(--ag-cell-horizontal-padding);
-		padding-right: var(--ag-cell-horizontal-padding);
-	}
+    /* Enable built‑in header column separator */
+    .ag-header-cell::before {
+      display: block !important;
+    }
 
-	.ag-cell {
-		outline: none !important;
-		border: none !important;
-		padding-left: var(--ag-cell-horizontal-padding);
-		padding-right: var(--ag-cell-horizontal-padding);
-		line-height: 28px;
-		transition: background-color 0.15s;
-		white-space: pre;
 
-		&:hover {
-			background-color: #e3e3e3 !important;
-		}
-	}
+    /* Remove right border on the last column to avoid double line */
+    .ag-header-cell:last-child,
+    .ag-cell:last-child {
+      border-right: none;
+    }
+
+
+    .ag-cell {
+      outline: none !important;
+      /* border: none !important; */
+      padding-left: var(--ag-cell-horizontal-padding);
+      padding-right: var(--ag-cell-horizontal-padding);
+      line-height: 28px;
+      transition: background-color 0.15s;
+      .ag-cell-value {
+        white-space: pre !important;
+      }
+
+
+      &:hover {
+        background-color: #e3e3e3 !important;
+      }
+
+      /* Add vertical grid lines */
+      border-left: 1px solid var(--ag-border-color);
+
+    }
+
+    /* Remove left border from the row‑number column */
+    .ag-cell[col-id="_rowNumber"] {
+      border-left: none;
+    }
+
 
 	.ag-cell-focus {
 		border: none !important;

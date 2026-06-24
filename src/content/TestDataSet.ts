@@ -6,31 +6,22 @@ export const TestDataSet: DataSet = {
 	columns: [
 		"Name",
 		"Phone",
-		"Type"
+		"Type",
+		"Email",
+		"Joined",
+		"Salary",
+		"Notes",
+		"Missing"
 	],
-	items: [
-		{ _id: createDataItemID(), "Name": "Jack", "Phone": "+1(800)-555-8030", "Type": "Student" },
-		{ _id: createDataItemID(), "Name": "Bo", "Phone": "+1(800)-555-8030", "Type": "  Student" },
-		{ _id: createDataItemID(), "Name": "Jill", "Phone": "+1(800)-555-8030", "Type": "student" },
-		{ _id: createDataItemID(), "Name": "andrew", "Phone": "+1(800)-555-8030", "Type": "Professor" },
-		{ _id: createDataItemID(), "Name": "Tessa", "Phone": "+1(800)-555-8030", "Type": "student" },
-		{ _id: createDataItemID(), "Name": "Aliza", "Phone": "+1(800)-555-8030", "Type": "Professor" },
-		{ _id: createDataItemID(), "Name": "Randall", "Phone": "+1(803)-555-8030", "Type": "  Student" },
-		{ _id: createDataItemID(), "Name": "Rita", "Phone": "+1(800)-555-8030", "Type": "student" },
-		{ _id: createDataItemID(), "Name": "alba", "Phone": "+1(800)-555-8030", "Type": "Professor" },
-		{ _id: createDataItemID(), "Name": "Joseph", "Phone": "+1(803)-555-8030", "Type": "  Student" },
-		{ _id: createDataItemID(), "Name": "Candice", "Phone": "+1(800)-555-8030", "Type": "student" },
-		{ _id: createDataItemID(), "Name": "Ava", "Phone": "+1(800)-555-8030", "Type": "Professor" },
-		{ _id: createDataItemID(), "Name": "Isaac", "Phone": "+1(803)-555-8030", "Type": "  Student" },
-		{ _id: createDataItemID(), "Name": "Emma", "Phone": "+1(800)-555-8030", "Type": "student" },
-		{ _id: createDataItemID(), "Name": "Amber", "Phone": "+1(800)-555-8030", "Type": "Professor" },
-		{ _id: createDataItemID(), "Name": "Rita", "Phone": "+1(800)-555-8030", "Type": "student" },
-		{ _id: createDataItemID(), "Name": "alba", "Phone": "+1(800)-555-8030", "Type": "Professor" },
-		{ _id: createDataItemID(), "Name": "Joseph", "Phone": "+1(803)-555-8030", "Type": "  Student" },
-		{ _id: createDataItemID(), "Name": "Candice", "Phone": "+1(800)-555-8030", "Type": "student" },
-		{ _id: createDataItemID(), "Name": "Ava", "Phone": "+1(800)-555-8030", "Type": "Professor" },
-		{ _id: createDataItemID(), "Name": "Isaac", "Phone": "+1(803)-555-8030", "Type": "  Student" },
-		{ _id: createDataItemID(), "Name": "Emma", "Phone": "+1(800)-555-8030", "Type": "student" },
-		{ _id: createDataItemID(), "Name": "Amber", "Phone": "+1(800)-555-8030", "Type": "Professor" },
-	]
+	items: Array.from({ length: 100 }, (_, i) => ({
+		_id: createDataItemID(),
+		Name: i === 99 ? "user1" : (i % 3 === 0 ? `user${i + 1}` : `User${i + 1}`),
+		Phone: i === 99 ? `+1(800)-555-8000` : `+1(800)-555-${(8000 + i).toString().padStart(4, "0")}`,
+		Type: i === 99 ? "  Student" : (i % 2 === 0 ? "  Student" : "Professor "),
+		Email: i === 99 ? " USER1@example.com " : (i % 4 === 0 ? ` USER${i+1}@example.com` : `user${i+1}@example.com`),
+		Joined: i === 99 ? "1/1/2020" : (i % 5 === 0 ? `1/${(i%28)+1}/2020` : `2020-01-${String((i%28)+1).padStart(2, '0')}`),
+		Salary: i === 99 ? "$40,000" : (i % 2 === 0 ? `$${(40000 + i * 100).toLocaleString()}` : `${40000 + i * 100}`),
+		Notes: "",
+		Missing: i % 7 === 0 ? "" : "Data"
+	}))
 }
